@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CinematchScreen: React.FC = () => {
-  
+  const navigate = useNavigate();
+
   // Simulating the duplicate buttons shown in the mockup
   const servicesList: string[] = [
     'Netflix', 'Hulu', 'Netflix', 'Hulu', 'Netflix', 'Hulu',
@@ -84,7 +86,8 @@ const CinematchScreen: React.FC = () => {
             <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2">
               <span>&larr;</span> Back
             </button>
-            <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2">
+            <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2"
+            onClick={() => navigate('/favorites')}>
               Continue <span>&rarr;</span>
             </button>
           </div>
