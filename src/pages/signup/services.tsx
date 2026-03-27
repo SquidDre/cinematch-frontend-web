@@ -1,0 +1,97 @@
+import React, { useState } from 'react';
+
+const CinematchScreen: React.FC = () => {
+  
+  // Simulating the duplicate buttons shown in the mockup
+  const servicesList: string[] = [
+    'Netflix', 'Hulu', 'Netflix', 'Hulu', 'Netflix', 'Hulu',
+    'Netflix', 'Hulu', 'Netflix', 'Hulu', 'Netflix', 'Hulu'
+  ];
+
+  // Added <number[]> to strictly type the array of selected indices
+  const [selected, setSelected] = useState<number[]>([]);
+
+  // Added type annotation for the index parameter
+  const toggleService = (index: number): void => {
+    if (selected.includes(index)) {
+      setSelected(selected.filter((i) => i !== index));
+    } else {
+      setSelected([...selected, index]);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-[#E85D22] selection:text-white">
+      {/* Header */}
+      <header className="flex justify-between items-center px-8 py-6 border-b border-[#222]">
+        <div className="text-xl font-bold tracking-[0.2em] text-gray-100">
+          CINEMATCH
+        </div>
+        <div className="text-sm text-gray-400">
+          Step 1 of 3
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-8 pt-16 pb-12">
+        {/* Eyebrow text */}
+        <p className="text-[#E85D22] text-xs font-bold tracking-widest uppercase mb-6">
+          Select all that apply
+        </p>
+
+        {/* Hero Typography */}
+        <div className="mb-8">
+          <h1 className="text-7xl md:text-8xl font-serif tracking-tight leading-none mb-2">
+            Pick your<span className="text-[#E85D22]">.</span>
+          </h1>
+          <h1 className="text-7xl md:text-8xl font-serif italic text-[#E85D22] tracking-tight leading-none">
+            services.
+          </h1>
+        </div>
+
+        <p className="text-gray-400 text-lg mb-12">
+          We'll only show you movies you can actually watch
+        </p>
+
+        {/* Grid of Services */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-24">
+          {servicesList.map((service, index) => {
+            const isSelected = selected.includes(index);
+            return (
+              <button
+                key={index}
+                onClick={() => toggleService(index)}
+                className={`flex items-center justify-center gap-2 py-3 px-6 rounded-full border transition-all duration-200 ease-in-out
+                  ${isSelected 
+                    ? 'border-[#E85D22] text-white bg-[#E85D22]/10' 
+                    : 'border-[#333] text-gray-300 hover:border-gray-400 hover:text-white'
+                  }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-[#E85D22]' : 'bg-gray-500'}`}></span>
+                <span className="font-semibold text-sm md:text-base">{service}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Footer Navigation */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-12">
+          <div className="text-gray-400 text-lg">
+            <span className="text-[#E85D22] font-bold">{selected.length}</span> selected
+          </div>
+          
+          <div className="flex items-center gap-8">
+            <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2">
+              <span>&larr;</span> Back
+            </button>
+            <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2">
+              Continue <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default CinematchScreen;
