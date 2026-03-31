@@ -24,7 +24,7 @@ const CinematchScreen: React.FC = () => {
   return (
     <div className="min-h-screen text-white font-sans selection:bg-[#E85D22] selection:text-white flex">
       {/* Header */}
-      <div className="f justify-between items-center px-8 py-6 border-b border-[#222] bg-orange-100 w-[45%] flex-col justify-between">
+      <div className="f justify-between items-center px-8 py-6 border-b border-[#222] bg-[#F4F1EA] w-[45%] flex-col justify-between">
         <div className="text-xl font-bold tracking-[0.2em] text-black mb-24 ml-4">
           CINEMATCH
         </div>
