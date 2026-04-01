@@ -1,15 +1,27 @@
+// IMPORTANT: for this page handleSubmit is currently just a placeholder that logs the form data to the console.
+// In a real application, you would replace the console.log with an API call to your backend to create the user account.
+// Also have it switch to the next page or show a success message upon successful account creation.
+
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SplashScreen: React.FC = () => {
   // A reusable block for the marquee so we can duplicate it for an infinite loop
+  const Navigate = useNavigate();
   const [ firstName, setFirstName ] = React.useState('');
   const [ lastName, setLastName ] = React.useState('');
   const [ email, setEmail ] = React.useState('');
   const [ password, setPassword ] = React.useState('');
 
-  const MarqueeContent = () => (
-  
+  //submitting the form, eventually will call backend API
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here is where we will eventually call your backend API!
+    console.log("Submitting:", { firstName, lastName, email, password });
+    Navigate("/services");
+  };
 
+  const MarqueeContent = () => (
     <div className="flex items-center space-x-6 px-3">
       <span className="font-serif text-3xl font-bold tracking-tight text-black">CineMatch</span>
       <span className="text-white/70 text-sm">●</span>
@@ -98,7 +110,8 @@ const SplashScreen: React.FC = () => {
             <p className="text-gray-400 text-lg mb-12">
               Rate what you've seen. Tell us your streaming services. We do the rest.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4"> 
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4"> 
                 <div className="flex flex-col">
 
                     <p className="text-gray-400 text-md mb-4 font-bold">
@@ -126,29 +139,37 @@ const SplashScreen: React.FC = () => {
                         className="w-full mb-4 px-4 py-3 rounded-full bg-white/10 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
                     />
                 </div>
-            </div>
-            <p className="text-gray-400 text-md mb-4 font-bold">
-                EMAIL
-            </p>
+              </div>
+              <p className="text-gray-400 text-md mb-4 font-bold">
+                  EMAIL
+              </p>
 
-            <input
-                type="text"
-                placeholder="eg. john.doe@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mb-4 px-4 py-3 rounded-full bg-white/10 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
-            />
-            <p className="text-gray-400 text-md mb-4 mt-4 font-bold">
-                PASSWORD
-            </p>
+              <input
+                  type="text"
+                  placeholder="eg. john.doe@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full mb-4 px-4 py-3 rounded-full bg-white/10 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
+              />
+              <p className="text-gray-400 text-md mb-4 mt-4 font-bold">
+                  PASSWORD
+              </p>
 
-            <input
-                type="password"
-                placeholder="eg. ••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full mb-4 px-4 py-3 rounded-full bg-white/10 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
-            />
+              <input
+                  type="password"
+                  placeholder="eg. ••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full mb-4 px-4 py-3 rounded-full bg-white/10 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
+              />
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                className="w-full bg-[#E85D22] hover:bg-[#d04e1b] text-white py-4 px-8 rounded-full font-bold text-xl transition-colors mt-4 flex items-center justify-center gap-2"
+              >
+                Create account <span>&rarr;</span>
+              </button>
+            </form>
                 
             
             
