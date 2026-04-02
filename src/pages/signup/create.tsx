@@ -1,9 +1,20 @@
+// IMPORTANT: for this page handleSubmit is currently just a placeholder that logs the form data to the console.
+// In a real application, you would replace the console.log with an API call to your backend to create the user account.
+// Also have it switch to the next page or show a success message upon successful account creation.
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 const SplashScreen: React.FC = () => {
   // A reusable block for the marquee so we can duplicate it for an infinite loop
+  const Navigate = useNavigate();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here is where we will eventually call your backend API!
+    console.log("Submitting:", { firstName, lastName, email, password });
+    Navigate("/services");
+  };
   const [ firstName, setFirstName ] = React.useState('');
   const [ lastName, setLastName ] = React.useState('');
   const [ email, setEmail ] = React.useState('');
@@ -12,8 +23,6 @@ const SplashScreen: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const MarqueeContent = () => (
-  
-
     <div className="flex items-center space-x-6 px-3">
       <span className="font-serif text-3xl font-bold tracking-tight text-black">CineMatch</span>
       <span className="text-white/70 text-sm">●</span>
@@ -102,7 +111,8 @@ const SplashScreen: React.FC = () => {
             <p className="text-gray-400 text-lg mb-12">
               Rate what you've seen. Tell us your streaming services. We do the rest.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4"> 
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4"> 
                 <div className="flex flex-col">
 
                     <p className="text-gray-400 text-md mb-2 font-bold">
@@ -178,7 +188,7 @@ const SplashScreen: React.FC = () => {
 
 
 
-
+            </form>
           </div>
         </div>
       </div>
@@ -193,7 +203,6 @@ const SplashScreen: React.FC = () => {
           <MarqueeContent />
         </div>
       </div>
-
     </div>
   );
 };
