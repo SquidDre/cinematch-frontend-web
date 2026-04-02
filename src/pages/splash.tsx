@@ -87,7 +87,9 @@ const SplashScreen: React.FC = () => {
               <button className="w-full bg-[#E85D22] hover:bg-[#d04e1b] text-white py-4 px-8 rounded-full font-bold text-xl transition-colors duration-200" onClick={() => navigate('/create')}>
                 Create free account
               </button>
-              <button className="w-full bg-transparent border-2 border-white hover:bg-white/10 text-white py-4 px-8 rounded-full font-bold text-xl transition-colors duration-200">
+              <button className="w-full bg-transparent border-2 border-white hover:bg-white/10 text-white py-4 px-8 rounded-full font-bold text-xl transition-colors duration-200"
+                      onClick = {() => navigate('/login')}
+              >
                 Log in
               </button>
             </div>
