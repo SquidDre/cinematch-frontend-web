@@ -96,116 +96,107 @@ const RateMoviesScreen: React.FC = () => {
     <div className="flex flex-col min-h-screen font-sans text-white selection:bg-[#E85D22] selection:text-white">
       <div className="flex flex-col lg:flex-row flex-grow">
         
-        {/* --- Left Column: #141414 Background & Split Line --- */}
-<div className="w-full lg:w-1/2 bg-[#141414] p-8 md:p-16 md:pb-8 flex flex-col relative lg:border-r lg:border-[#333] min-h-[50vh] lg:min-h-0">
-  
-  {/* Header (Left Side) */}
-  <div className="flex justify-between w-full mb-24 ml-0 lg:ml-4">
-    <div className="text-xl font-bold tracking-[0.2em] text-gray-500">
-      CINEMATCH
-    </div>
-    {/* Step indicator shows on mobile here, hidden on desktop */}
-    <div className="text-sm text-gray-500 font-medium tracking-wide lg:hidden">
-      Step 2 of 3
-    </div>
-  </div>
+        {/* Left Column */}
+        <div className="w-full lg:w-1/2 bg-[#141414] p-8 md:p-16 flex flex-col justify-between lg:border-r lg:border-[#333] min-h-[50vh] lg:min-h-0">
+          
+          {/* Header (Left Side) */}
+          <div className="flex justify-between w-full mb-24">
+            <div className="text-xl font-bold tracking-[0.2em] ml-4 text-gray-500">
+              CINEMATCH
+            </div>
+            {/* Step indicator shows on mobile here, hidden on desktop */}
+            <div className="text-sm text-gray-500 font-medium tracking-wide">
+              Step 2 of 3
+            </div>
+          </div>
 
-  {/* Typography & Instructions */}
-  <div className="ml-0 lg:ml-4">
-    <p className="text-[#E85D22] text-xs font-bold tracking-widest uppercase mb-4">
-      Rate what you've watched
-    </p>
-    
-    <h1 className="text-7xl md:text-8xl font-serif tracking-tight leading-none text-white">
-      Tell us your
-    </h1>
-    <h1 className="text-7xl md:text-8xl font-serif italic text-[#E85D22] tracking-tight leading-none mb-4">
-      taste.
-    </h1>
-    
-    <p className="text-gray-400 text-lg max-w-sm mb-12">
-      Rate each card and save it. Skip anything you haven't seen.
-    </p>
+          {/* Typography & Instructions */}
+          <div className="flex flex-col justify-center ml-4">
+            <h1 className="text-6xl md:text-8xl lg:text-[110px] font-serif tracking-tight leading-[0.9] text-white mb-2">
+              Tell us your
+            </h1>
+            <h1 className="text-6xl md:text-8xl lg:text-[110px] italic font-serif tracking-tight leading-[0.9] text-[#E85D22] mb-6">
+              favorites
+            </h1>
+            <p className="text-gray-400 text-lg max-w-sm mb-12">
+              Rate each card and save it. Skip anything you haven't seen.
+            </p>
 
-    {/* Progress Bar */}
-    <div className="mb-12 max-w-md">
-      <div className="flex justify-between text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
-        <span>Your ratings</span>
-        <span><strong className="text-[#E85D22]">{currentIndex}</strong> of {totalMovies} rated</span>
-      </div>
-      <div className="w-full bg-black border border-[#333] h-2 rounded-full overflow-hidden">
-        <div 
-          className="bg-[#E85D22] h-full transition-all duration-500 ease-out"
-          style={{ width: `${(currentIndex / totalMovies) * 100}%` }}
-        ></div>
-      </div>
-    </div>
-  </div>
+            {/* Progress Bar */}
+            <div className="mb-12 max-w-md">
+              <div className="flex justify-between text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
+                <span>Your ratings</span>
+                <span><strong className="text-[#E85D22]">{currentIndex}</strong> of {totalMovies} rated</span>
+              </div>
+              <div className="w-full bg-black border border-[#333] h-2 rounded-full overflow-hidden">
+                <div 
+                  className="bg-[#E85D22] h-full transition-all duration-500 ease-out"
+                  style={{ width: `${(currentIndex / totalMovies) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
 
-  {/* Movie Meta & Controls */}
-  {/* We use mt-auto here to push this block perfectly to the bottom! */}
-  <div className={`mt-auto ml-0 lg:ml-4 transition-opacity duration-300 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-    <p className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-4">
-      Movie {currentIndex + 1} of {totalMovies}
-    </p>
-    
-    {/* Genre Tags */}
-    <div className="flex flex-wrap gap-2 mb-4">
-      {currentMovie.genres.map((genre, idx) => (
-        <span key={idx} className="px-3 py-1 border border-[#444] bg-black text-gray-400 text-xs font-bold uppercase tracking-wider rounded-full">
-          {genre}
-        </span>
-      ))}
-    </div>
+          {/* Movie Meta & Controls */}
+          <div className={`mt-auto transition-opacity duration-300 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+            <p className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-4">
+              Movie {currentIndex + 1} of {totalMovies}
+            </p>
+            
+            {/* Genre Tags */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {currentMovie.genres.map((genre, idx) => (
+                <span key={idx} className="px-3 py-1 border border-[#444] bg-black text-gray-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                  {genre}
+                </span>
+              ))}
+            </div>
 
-    <h2 className="text-4xl md:text-5xl font-serif text-white mb-2">
-      {currentMovie.title}
-    </h2>
-    <p className="text-gray-500 mb-8">
-      Directed by {currentMovie.director} • {currentMovie.year} • {currentMovie.duration}
-    </p>
+            <h2 className="text-4xl md:text-5xl font-serif text-white mb-2">
+              {currentMovie.title}
+            </h2>
+            <p className="text-gray-500 mb-8">
+              Directed by {currentMovie.director} • {currentMovie.year} • {currentMovie.duration}
+            </p>
 
-    {/* Interaction Row */}
-    <div className="flex items-center gap-6 md:gap-8">
-      {/* Star Rating */}
-      <div className="flex gap-1 md:gap-2">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            onMouseEnter={() => setHoveredStar(star)}
-            onMouseLeave={() => setHoveredStar(null)}
-            onClick={() => rateMovie(star)}
-            className="transition-transform hover:scale-110 focus:outline-none"
-          >
-            {(hoveredStar !== null && star <= hoveredStar) ? (
-              <StarSolid className="w-9 h-9 md:w-10 md:h-10 text-[#E85D22]" />
-            ) : (
-              <StarOutline className="w-9 h-9 md:w-10 md:h-10 text-gray-500 hover:text-gray-300" />
-            )}
-          </button>
-        ))}
-      </div>
-      
-      <div className="w-px h-8 bg-[#444]"></div>
+            {/* Interaction Row */}
+            <div className="flex items-center gap-6 md:gap-8">
+              {/* Star Rating */}
+              <div className="flex gap-1 md:gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onMouseEnter={() => setHoveredStar(star)}
+                    onMouseLeave={() => setHoveredStar(null)}
+                    onClick={() => rateMovie(star)}
+                    className="transition-transform hover:scale-110 focus:outline-none"
+                  >
+                    {(hoveredStar !== null && star <= hoveredStar) ? (
+                      <StarSolid className="w-9 h-9 md:w-10 md:h-10 text-[#E85D22]" />
+                    ) : (
+                      <StarOutline className="w-9 h-9 md:w-10 md:h-10 text-gray-500 hover:text-gray-300" />
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="w-px h-8 bg-[#444]"></div>
 
-      {/* Skip Button */}
-      <button 
-        onClick={skipMovie}
-        className="text-gray-400 hover:text-white font-bold tracking-wide transition-colors whitespace-nowrap"
-      >
-        Skip movie
-      </button>
-    </div>
-  </div>
-</div>
+              {/* Skip Button */}
+              <button 
+                onClick={skipMovie}
+                className="text-gray-400 hover:text-white font-bold tracking-wide transition-colors whitespace-nowrap"
+              >
+                Skip movie
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* --- Right Column: Pure Black Background --- */}
         <div className="w-full lg:w-1/2 bg-black p-8 md:p-16 flex flex-col items-center justify-center relative min-h-[50vh] lg:min-h-0">
           
           {/* Step indicator shows on desktop here to balance the logo */}
-          <div className="absolute top-8 right-8 md:top-16 md:right-16 text-sm text-gray-500 font-medium tracking-wide hidden lg:block">
-            Step 2 of 3
-          </div>
 
           <div className={`relative w-full max-w-md xl:max-w-lg aspect-[2/3] rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}>
             <img 
