@@ -30,11 +30,11 @@ const CinematchScreen: React.FC = () => {
             CINEMATCH
           </div>
           <div className="ml-4">
-            <h1 className="text-7xl md:text-8xl font-serif tracking-tight leading-none text-black">
+            <h1 className="text-7xl md:text-8xl lg:text-[110px] font-serif tracking-tight leading-none text-black">
               Pick your<span className="text-black"></span>
             </h1>
             
-            <h1 className="text-7xl md:text-8xl font-serif italic text-[#E85D22] tracking-tight leading-none mb-4">
+            <h1 className="text-7xl md:text-8xl lg:text-[110px] font-serif italic text-[#E85D22] tracking-tight leading-none mb-4">
               favorites.
             </h1>
               <p className="text-gray-400 text-lg mb-12">
