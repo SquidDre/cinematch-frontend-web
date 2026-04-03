@@ -12,7 +12,7 @@ const MOVIE_QUEUE = [
     year: '2014',
     duration: '2H 49M',
     genres: ['Sci-Fi', 'Adventure'],
-    poster: 'https://image.tmdb.org/t/p/original/gEU2QlsUUHXjNENx21u134v9fV1.jpg', 
+    poster: 'https://image.tmdb.org/t/p/w1280/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg', 
   },
   {
     id: '2',
@@ -21,7 +21,7 @@ const MOVIE_QUEUE = [
     year: '2022',
     duration: '2H 19M',
     genres: ['Action', 'Comedy'],
-    poster: 'https://image.tmdb.org/t/p/original/w3LxiVYdWWRvEVllEjSUA2B44s.jpg',
+    poster: 'https://image.tmdb.org/t/p/w1280/u68AjlvlutfEIcpmbYpKcdi09ut.jpg',
   },
   {
     id: '3',
@@ -138,7 +138,7 @@ const RateMoviesScreen: React.FC = () => {
           </div>
 
           {/* Movie Meta & Controls */}
-          <div className={`mt-auto transition-opacity duration-300 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+          <div className={`transition-opacity duration-300 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
             <p className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-4">
               Movie {currentIndex + 1} of {totalMovies}
             </p>
