@@ -36,6 +36,8 @@ const MOVIE_QUEUE = [
 
 const RateMoviesScreen: React.FC = () => {
   const navigate = useNavigate();
+  const [isCardShrunk, setIsCardShrunk] = useState(false);
+
   
   // --- STATE ---
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -55,6 +57,7 @@ const RateMoviesScreen: React.FC = () => {
       setCurrentIndex((prev) => prev + 1);
       setIsFading(false);
       setHoveredStar(null);
+      setIsCardShrunk(false); //reset the large poster for next
     }, 300);
   };
 
@@ -74,22 +77,6 @@ const RateMoviesScreen: React.FC = () => {
     console.log("Final Ratings Data:", ratings);
     navigate('/home');
   };
-
-  // --- RENDER FINISHED STATE ---
-  if (isFinished) {
-    return (
-      <div className="min-h-screen bg-[#141414] flex flex-col items-center justify-center text-white font-sans p-8">
-        <h1 className="text-5xl font-serif italic text-[#E85D22] mb-6">All set!</h1>
-        <p className="text-gray-400 text-lg mb-10">We've locked in your tastes.</p>
-        <button 
-          onClick={handleFinish}
-          className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-10 py-4 rounded-full font-bold text-xl transition-colors flex items-center gap-2"
-        >
-          See my picks <span>&rarr;</span>
-        </button>
-      </div>
-    );
-  }
 
   // --- MAIN RENDER ---
   return (
@@ -123,7 +110,7 @@ const RateMoviesScreen: React.FC = () => {
             </p>
 
             {/* Progress Bar */}
-            <div className="mb-12 max-w-md">
+            <div className="max-w-md">
               <div className="flex justify-between text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
                 <span>Your ratings</span>
                 <span><strong className="text-[#E85D22]">{currentIndex}</strong> of {totalMovies} rated</span>
@@ -137,77 +124,102 @@ const RateMoviesScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Movie Meta & Controls */}
-          <div className={`transition-opacity duration-300 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-            <p className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-4">
-              Movie {currentIndex + 1} of {totalMovies}
-            </p>
+          {/* Conditional */}
+          <div className={`ml-0 lg:ml-4 transition-opacity duration-500 ease-in-out`}>
             
-            {/* Genre Tags */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              {currentMovie.genres.map((genre, idx) => (
-                <span key={idx} className="px-3 py-1 border border-[#444] bg-black text-gray-400 text-xs font-bold uppercase tracking-wider rounded-full">
-                  {genre}
-                </span>
-              ))}
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-serif text-white mb-2">
-              {currentMovie.title}
-            </h2>
-            <p className="text-gray-500 mb-8">
-              Directed by {currentMovie.director} • {currentMovie.year} • {currentMovie.duration}
-            </p>
-
-            {/* Interaction Row */}
-            <div className="flex items-center gap-6 md:gap-8">
-              {/* Star Rating */}
-              <div className="flex gap-1 md:gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onMouseEnter={() => setHoveredStar(star)}
-                    onMouseLeave={() => setHoveredStar(null)}
-                    onClick={() => rateMovie(star)}
-                    className="transition-transform hover:scale-110 focus:outline-none"
-                  >
-                    {(hoveredStar !== null && star <= hoveredStar) ? (
-                      <StarSolid className="w-9 h-9 md:w-10 md:h-10 text-[#E85D22]" />
-                    ) : (
-                      <StarOutline className="w-9 h-9 md:w-10 md:h-10 text-gray-500 hover:text-gray-300" />
-                    )}
-                  </button>
-                ))}
+            {isFinished ? (
+              // The Finale State (Fades in)
+              <div className="animate-fade-in-up">
+                <h2 className="text-4xl font-serif italic text-[#E85D22] mb-4">All set!</h2>
+                <p className="text-gray-400 mb-8">We've locked in your tastes.</p>
+                <button 
+                  onClick={handleFinish}
+                  className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors inline-flex items-center gap-2"
+                >
+                  See my picks <span>&rarr;</span>
+                </button>
               </div>
-              
-              <div className="w-px h-8 bg-[#444]"></div>
+            ) : (
+              // The Normal State (Movie Meta)
+              <div className={`${isFading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {currentMovie?.genres.map((genre, idx) => (
+                    <span key={idx} className="px-3 py-1 border border-[#444] bg-black text-gray-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+                <h2 className="text-4xl md:text-5xl font-serif text-white mb-2">
+                  {currentMovie?.title}
+                </h2>
+                <p className="text-gray-500">
+                  Directed by {currentMovie?.director} • {currentMovie?.year}
+                </p>
+              </div>
+            )}
 
-              {/* Skip Button */}
-              <button 
-                onClick={skipMovie}
-                className="text-gray-400 hover:text-white font-bold tracking-wide transition-colors whitespace-nowrap"
-              >
-                Skip movie
-              </button>
-            </div>
           </div>
         </div>
 
         {/* --- Right Column: Pure Black Background --- */}
         <div className="w-full lg:w-1/2 bg-black p-8 md:p-16 flex flex-col items-center justify-center relative min-h-[50vh] lg:min-h-0">
           
-          {/* Step indicator shows on desktop here to balance the logo */}
 
-          <div className={`relative w-full max-w-md xl:max-w-lg aspect-[2/3] rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-300 ease-in-out ${isFading ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}>
-            <img 
-              src={currentMovie.poster} 
-              alt={currentMovie.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-          </div>
+          {/* The Interactive Card */}
+          {!isFinished && currentMovie && (
+            <div 
+              onClick={() => !isCardShrunk && setIsCardShrunk(true)}
+              className={`relative flex flex-col items-center overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                isCardShrunk 
+                  ? 'w-full max-w-md bg-white rounded-[2rem] p-6 cursor-default' 
+                  : 'w-full max-w-md xl:max-w-lg bg-transparent rounded-2xl p-0 cursor-pointer hover:scale-[1.02]'
+              } ${isFading ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+            >
+              
+              {/* The Poster Image */}
+              <div className={`w-full transition-all duration-700 overflow-hidden ${isCardShrunk ? 'aspect-[2/3] rounded-xl' : 'aspect-[2/3] rounded-2xl shadow-2xl'}`}>
+                <img 
+                  src={currentMovie.poster} 
+                  alt={currentMovie.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* The Rating UI (Only fades in when card is shrunk) */}
+              <div className={`flex flex-col items-center w-full transition-all duration-500 ${isCardShrunk ? 'opacity-100 mt-6 h-auto' : 'opacity-0 h-0 overflow-hidden'}`}>
+                <h3 className="text-black font-serif text-2xl mb-1">{currentMovie.title}</h3>
+                <p className="text-gray-400 text-xs mb-4">{currentMovie.director} • {currentMovie.year}</p>
+                
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onMouseEnter={() => setHoveredStar(star)}
+                      onMouseLeave={() => setHoveredStar(null)}
+                      onClick={() => rateMovie(star)}
+                      className="transition-transform hover:scale-110 focus:outline-none"
+                    >
+                      {(hoveredStar !== null && star <= hoveredStar) ? (
+                        <StarSolid className="w-8 h-8 text-[#E85D22]" />
+                      ) : (
+                        <StarSolid className="w-8 h-8 text-gray-200 hover:text-gray-300" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={skipMovie}
+                  className="bg-[#E85D22] text-white text-xs font-bold uppercase tracking-wider px-6 py-2 rounded-full hover:bg-[#d04e1b] transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+
+            </div>
+          )}
         </div>
-
       </div>
     </div>
   );
