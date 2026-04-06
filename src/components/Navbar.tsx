@@ -6,9 +6,10 @@ const Navbar: React.FC = () => {
 
   // Helper to check if a link is active to apply the white text
   const isActive = (path: string) => location.pathname === path;
+  const [isAccountMenuOpen, setAccountMenuOpen] = React.useState(false);
 
   return (
-    <nav className="w-full flex items-center justify-between px-8 py-6 bg-[#0a0a0a] border-b border-white/5">
+    <nav className="w-full flex items-center justify-between px-8 py-6 bg-[#0a0a0a] border-b border-white/5 ">
       {/* Left: Logo */}
       <div className="text-xl font-bold tracking-[0.2em] text-gray-400 cursor-pointer">
         CINEMATCH
@@ -32,12 +33,25 @@ const Navbar: React.FC = () => {
 
       {/* Right: User Profile */}
       <div className="flex items-center gap-3 cursor-pointer">
-        <div className="w-8 h-8 rounded-full bg-[#E85D22] flex items-center justify-center text-white text-xs font-bold">
-          JD
-        </div>
-        <span className="text-gray-300 text-sm hidden sm:block hover:text-white transition-colors">
-          John D.
-        </span>
+        <button onClick={() => setAccountMenuOpen(prev => !prev)} className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-[#E85D22] flex items-center justify-center text-white text-xs font-bold">
+            JD
+          </div>
+          <span className="text-gray-300 text-sm hidden sm:block hover:text-white transition-colors">
+            John D.
+          </span>
+        </button>
+        {/* Account Dropdown */}
+        {isAccountMenuOpen && (
+          <div className="absolute right-8 top-16 bg-[#141414] border border-white/10 rounded shadow-lg py-2 w-48">
+            <Link to="/account" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
+              Settings
+            </Link>
+            <Link to="/" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
+              Logout
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );
