@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 const CinematchScreen: React.FC = () => {
   const navigate = useNavigate();
 
-  // Simulating the duplicate buttons shown in the mockup
   const servicesList: string[] = [
-    'Netflix', 'Hulu', 'Netflix', 'Hulu', 'Netflix', 'Hulu',
-    'Netflix', 'Hulu', 'Netflix', 'Hulu', 'Netflix', 'Hulu'
-  ];
+    'Netflix', 'Hulu', 'Disney+', 'Apple TV+',
+    'Prime Video', 'Max', 'Peacock', 'Paramount+',
+    'Showtime', 'ESPN+', 'Crunchyroll', 'Rakuten Viki', 'Kocowa'
+  ]
+
 
   // Added <number[]> to strictly type the array of selected indices
   const [selected, setSelected] = useState<number[]>([]);
@@ -35,7 +36,7 @@ const CinematchScreen: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-8 pt-16 pb-12">
+      <main className="px-16 pt-8 pb-12 pt-16 pb-12">
         {/* Eyebrow text */}
         <p className="text-[#E85D22] text-xs font-bold tracking-widest uppercase mb-6">
           Select all that apply
@@ -44,7 +45,7 @@ const CinematchScreen: React.FC = () => {
         {/* Hero Typography */}
         <div className="mb-8">
           <h1 className="text-7xl md:text-8xl font-serif tracking-tight leading-none mb-2">
-            Pick your<span className="text-[#E85D22]">.</span>
+            Pick your
           </h1>
           <h1 className="text-7xl md:text-8xl font-serif italic text-[#E85D22] tracking-tight leading-none">
             services.
@@ -55,29 +56,30 @@ const CinematchScreen: React.FC = () => {
           We'll only show you movies you can actually watch
         </p>
 
-        {/* Grid of Services */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-24">
+        {/* Replace the grid div with this so each button has their own width depending on their content */}
+        <div className="flex flex-wrap gap-4 mb-24">
           {servicesList.map((service, index) => {
             const isSelected = selected.includes(index);
             return (
-              <button
-                key={index}
-                onClick={() => toggleService(index)}
-                className={`flex items-center justify-center gap-2 py-3 px-6 rounded-full border transition-all duration-200 ease-in-out
-                  ${isSelected 
-                    ? 'border-[#E85D22] text-white bg-[#E85D22]/10' 
-                    : 'border-[#333] text-gray-300 hover:border-gray-400 hover:text-white'
-                  }`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-[#E85D22]' : 'bg-gray-500'}`}></span>
-                <span className="font-semibold text-sm md:text-base">{service}</span>
-              </button>
+                <button
+                    key={index}
+                    onClick={() => toggleService(index)}
+                    className={`flex items-center gap-2 py-3 px-6 rounded-full border transition-all duration-200 ease-in-out
+          ${isSelected
+                        ? 'border-[#E85D22] text-white bg-[#E85D22]/10'
+                        : 'border-[#333] text-gray-300 hover:border-gray-400 hover:text-white'
+                    }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-[#E85D22]' : 'bg-gray-500'}`}></span>
+                  <span className="font-semibold text-sm md:text-base">{service}</span>
+                </button>
             );
           })}
         </div>
 
+
         {/* Footer Navigation */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-12">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-40">
           <div className="text-gray-400 text-lg">
             <span className="text-[#E85D22] font-bold">{selected.length}</span> selected
           </div>
