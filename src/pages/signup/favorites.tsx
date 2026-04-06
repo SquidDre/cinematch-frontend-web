@@ -6,8 +6,9 @@ const CinematchScreen: React.FC = () => {
   // Simulating the duplicate buttons shown in the mockup
   const genreList: string[] = [
     'Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi',
-    'Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi'
-  ];
+    'Thriller', 'Animation', 'Documentary', 'Fantasy', 'Mystery', 'Crime',
+    'Adventure', 'History', 'Music', 'Family'
+  ]
 
   // Added <number[]> to strictly type the array of selected indices
   const [selected, setSelected] = useState<number[]>([]);
@@ -42,7 +43,7 @@ const CinematchScreen: React.FC = () => {
               </p>
           </div>
           <div className="text-md text-gray-400 ml-4 mb-8 mt-auto tracking-wide">
-            Step 1 of 3
+            Step <span className=" font-bold">2</span> of 3
           </div>
         </div>
 
@@ -68,7 +69,7 @@ const CinematchScreen: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => toggleService(index)}
-                  className={`flex items-center justify-center gap-2 py-5 px-9 rounded-full border transition-all duration-200 ease-in-out
+                  className={`flex items-center gap-2 py-4 px-9 rounded-full border cursor-pointer transition-all duration-200 ease-in-out
                     ${isSelected 
                       ? 'border-[#E85D22] text-white bg-[#E85D22]/10' 
                       : 'border-[#333] text-gray-300 hover:border-gray-400 hover:text-white'
@@ -88,10 +89,10 @@ const CinematchScreen: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-8">
-              <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2" onClick={() => navigate('/services')}>
+              <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2 cursor-pointer" onClick={() => navigate('/services')}>
                 <span>&larr;</span> Back
               </button>
-              <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2">
+              <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2 cursor-pointer">
                 Continue <span>&rarr;</span>
               </button>
             </div>
