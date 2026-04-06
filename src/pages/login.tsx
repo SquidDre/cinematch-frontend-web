@@ -121,7 +121,11 @@ const Login: React.FC = () => {
                                 {showPassword ? (<EyeSlashIcon className = "w-5 h-5"/>) : (<EyeIcon className = "w-5 h-5" />)}
                             </button>
                         </div>
-                        <p className = "text-gray-500 text-sm mb-[73px]">Must be at least 8 characters</p>
+                        <p
+                            onClick = {() => navigate('/forgot-password')}
+                            className="text-right pr-4 text-[#E85D22] text-sm font-semibold hover:underline cursor-pointer mb-10 mt-2">
+                            Forgot password?
+                        </p>
 
                         {/* Sign in button */}
                         <button

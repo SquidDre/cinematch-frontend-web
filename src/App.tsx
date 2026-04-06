@@ -5,6 +5,7 @@ import Home from './pages/splash'
 import Create from './pages/signup/create'
 import Login from  './pages/login'
 import Rating from './pages/signup/rating'
+import ForgotPassword from "./pages/forgot-password.tsx";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<Create />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/rating" element={<Rating />} />
         <Route path="/services" element={<Services />} />
         <Route path="/favorites" element={<Favorites />} />
