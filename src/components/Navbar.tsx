@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Right: User Profile */}
-      <div className="flex items-center gap-3 cursor-pointer">
+      <div className="flex items-center gap-3 cursor-pointer mr-8">
         <button onClick={() => setAccountMenuOpen(prev => !prev)} className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-[#E85D22] flex items-center justify-center text-white text-xs font-bold">
             JD
@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
         </button>
         {/* Account Dropdown */}
         {isAccountMenuOpen && (
-          <div className="absolute right-8 top-16 bg-[#141414] border border-white/10 rounded shadow-lg py-2 w-48">
+          <div className="absolute right-0 top-20 bg-[#141414] border border-white/10 rounded shadow-lg py-2 w-48 z-40">
             <Link to="/account" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
               Settings
             </Link>

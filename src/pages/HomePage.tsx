@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import MovieCard from '../components/MovieCard_1';
-import MovieRow from '../components/MovieRow_1';
+import MovieRow_1 from '../components/MovieRow_1';
+import MovieRow_2 from '../components/MovieRow_2';
 
 const HomeScreen: React.FC = () => {
     const sampleMovies = [
@@ -15,29 +15,32 @@ const HomeScreen: React.FC = () => {
         },
         {
             id: '3', title: 'The Martian', platform: 'Apple TV+', genre: 'SCI-FI', match: '92%',
-            posterUrl: 'https://image.tmdb.org/t/p/w1280/5aGhaIHYuQbqlHWvWYqMCnj40y.jpg'
+            posterUrl: 'https://image.tmdb.org/t/p/original/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg'
         },
         {
             id: '4', title: 'Gravity', platform: 'Netflix', genre: 'SCI-FI', match: '89%',
-            posterUrl: 'https://image.tmdb.org/t/p/w1280/7WsyChQLEftFiDOVTGkv3hFpy.jpg'
+            posterUrl: 'https://image.tmdb.org/t/p/original/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg'
         }
     ];
     return (
         <div className="min-h-fit bg-black text-white font-sans">
             <Navbar />
-            <div className="max-w-full px-16 pt-8">
-                <MovieRow title="Because you watched Interstellar" movies={sampleMovies} />
+            <div className="max-w-full pl-16 pt-8">
+                <MovieRow_1 title="Picked For You Today" movies={sampleMovies} />
             </div>
-            <div className="max-w-full px-16">
-                <MovieRow title="Because you watched Interstellar" movies={sampleMovies} />
+            <div className="max-w-full pl-16">
+                <MovieRow_2 title="Because you watched Interstellar" movies={sampleMovies} />
             </div>
-            <div className="max-w-full px-16">
-                <MovieRow title="Because you watched Interstellar" movies={sampleMovies} />
+            <div className="max-w-full pl-16">
+                <MovieRow_2 title="Because you watched Interstellar" movies={sampleMovies} />
+            </div>
+            <div className="max-w-full pl-16">
+                <MovieRow_2 title="Because you watched Interstellar" movies={sampleMovies} />
             </div>
             {/* 1. The Outer Wrapper (The Trigger Area)
   Pinned to the right side of the screen. We give it the 'group' class to track the mouse. 
 */}
-            <div className="fixed top-0 right-0 pointer-events-none h-screen flex justify-end z-50">
+            <div className="fixed top-20 right-0 pointer-events-none h-screen flex justify-end z-50">
             
                 {/* 2. The Invisible Hitbox
                     This is a transparent strip on the far right edge of the screen. 
@@ -49,7 +52,7 @@ const HomeScreen: React.FC = () => {
                     Starts pushed completely off-screen using `translate-x-full`.
                     When the group is hovered, it slides to its normal position `translate-x-0`.
                 */}
-                <div className="relative w-80 h-full bg-[#141414] border-l border-white/10 shadow-2xl pointer-events-auto transform translate-x-full peer-hover:translate-x-0 hover:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] p-8">
+                <div className="relative w-100 h-full bg-[#0a0a0a] border-l border-t border-white/5 shadow-2xl pointer-events-auto transform translate-x-full peer-hover:translate-x-0 hover:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] p-8">
                     
                     <h2 className="text-white text-2xl font-serif mb-4"></h2>
                 

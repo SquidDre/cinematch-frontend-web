@@ -4,13 +4,12 @@ interface MovieCardProps {
   title: string;
   platform: string;
   genre: string;
-  match: string;
   posterUrl: string;
 }
 
-const MovieCard_2: React.FC<MovieCardProps> = ({ title, platform, genre, match, posterUrl }) => {
+const MovieCard_2: React.FC<MovieCardProps> = ({ title, platform, genre, posterUrl }) => {
   return (
-    <div className="group relative min-w-[150px] md:min-w-[250px] aspect-[2/1] rounded-2xl overflow-hidden cursor-pointer border border-white/5 transition-colors duration-300 hover:border-white/20">
+    <div className="group relative min-w-[280px] md:min-w-[460px] aspect-[2/1] rounded-2xl overflow-hidden cursor-pointer border border-white/5 transition-colors duration-300 hover:border-white/20">
       
       {/* Background Image: Zooms smoothly on hover */}
       <img 
@@ -21,11 +20,6 @@ const MovieCard_2: React.FC<MovieCardProps> = ({ title, platform, genre, match, 
 
       {/* Dark Gradient Overlay: Fades up from the bottom so the white text is always readable */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/20 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100"></div>
-
-      {/* Match Badge: Pinned to the top right */}
-      <div className="absolute top-3 right-3 bg-[#E85D22] text-white text-xs font-bold px-2.5 py-1 rounded shadow-lg z-10">
-        {match}
-      </div>
 
       {/* Text Content: Pinned to the bottom left */}
       <div className="absolute bottom-4 left-4 z-10 transform transition-transform duration-500 group-hover:-translate-y-1">
