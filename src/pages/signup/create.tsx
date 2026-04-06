@@ -179,7 +179,7 @@ const SplashScreen: React.FC = () => {
 
               {/* Create account button */}
               <button
-                  onClick = {() => navigate('/services')}
+                  onClick={() => navigate('/verify')}
                   className = "w-full py-4 rounded-full bg-[#E85D22] text-white font-bold text-lg hover:bg-[#d0521e] transition-colors duration-200"
               >
                   Create account →
