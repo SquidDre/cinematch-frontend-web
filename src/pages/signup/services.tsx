@@ -31,7 +31,7 @@ const CinematchScreen: React.FC = () => {
           CINEMATCH
         </div>
         <div className="text-sm text-gray-400">
-          Step 1 of 3
+          Step <span className="font-bold">1</span> of 3
         </div>
       </header>
 
@@ -64,7 +64,7 @@ const CinematchScreen: React.FC = () => {
                 <button
                     key={index}
                     onClick={() => toggleService(index)}
-                    className={`flex items-center gap-2 py-3 px-6 rounded-full border transition-all duration-200 ease-in-out
+                    className={`flex items-center gap-2 py-3 px-6 rounded-full border cursor-pointer transition-all duration-200 ease-in-out
           ${isSelected
                         ? 'border-[#E85D22] text-white bg-[#E85D22]/10'
                         : 'border-[#333] text-gray-300 hover:border-gray-400 hover:text-white'
@@ -85,10 +85,10 @@ const CinematchScreen: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-8">
-            <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2">
+            <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2 cursor-pointer">
               <span>&larr;</span> Back
             </button>
-            <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2"
+            <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2 cursor-pointer"
             onClick={() => navigate('/favorites')}>
               Continue <span>&rarr;</span>
             </button>
