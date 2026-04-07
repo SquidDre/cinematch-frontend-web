@@ -93,7 +93,7 @@ const RateMoviesScreen: React.FC = () => {
             </div>
             {/* Step indicator shows on mobile here, hidden on desktop */}
             <div className="text-sm text-gray-500 font-medium tracking-wide">
-              Step 2 of 3
+              Step <span className = "font-bold">3</span> of 3
             </div>
           </div>
 
@@ -144,7 +144,7 @@ const RateMoviesScreen: React.FC = () => {
               <div className={`${isFading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {currentMovie?.genres.map((genre, idx) => (
-                    <span key={idx} className="px-3 py-1 border border-[#444] bg-black text-gray-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                    <span key={idx} className="px-3 py-1  border-1 border-[#E85D22] bg-[#2A1200] text-white text-xs font-bold uppercase tracking-wider rounded-full">
                       {genre}
                     </span>
                   ))}
@@ -208,7 +208,19 @@ const RateMoviesScreen: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                
+
+                {/* Rating Label */}
+                <p className="text-[#E85D22] text-sm font-semibold mb-4 h-5">
+                  {hoveredStar === 1 && 'Poor'}
+                  {hoveredStar === 2 && 'Fair'}
+                  {hoveredStar === 3 && 'Good'}
+                  {hoveredStar === 4 && 'Great'}
+                  {hoveredStar === 5 && 'Perfect'}
+                </p>
+
+
+
+
                 <button 
                   onClick={skipMovie}
                   className="bg-[#E85D22] text-white text-xs font-bold uppercase tracking-wider px-6 py-2 rounded-full hover:bg-[#d04e1b] transition-colors"
