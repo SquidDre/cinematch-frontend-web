@@ -25,7 +25,7 @@ const CinematchScreen: React.FC = () => {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (selected.length === 0) {
       alert('Please select at least one streaming service to continue.');
       return
@@ -52,13 +52,17 @@ const CinematchScreen: React.FC = () => {
       const user = JSON.parse(storedUser);
       
 
-      const response = fetch(`http://localhost:8080/api/users/${user._id}/services`, {
+      const response = await fetch(`http://localhost:8080/api/users/${user._id}/services`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
+
+      if(!response.ok) {
+        throw new Error('Failed to save services. Please try again.');
+      }
 
       user.Services = selectedServices;
       localStorage.setItem("user", JSON.stringify(user));

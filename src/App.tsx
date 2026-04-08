@@ -1,12 +1,12 @@
-import{ BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
+import{ BrowserRouter, Routes, Route} from 'react-router-dom'
 import Services from './pages/signup/services'
-import Favorites from './pages/signup/favorites'
 import Home from './pages/splash'
 import Create from './pages/signup/create'
 import Login from  './pages/login'
 import Rating from './pages/signup/rating'
 import ForgotPassword from "./pages/forgot-password.tsx";
 import Verify from './pages/signup/verify'
+import Genres from './pages/signup/genres.tsx'
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/rating" element={<Rating />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/genres" element={<Genres />} />
 
       </Routes>
     </BrowserRouter>

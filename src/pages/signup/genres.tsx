@@ -12,15 +12,70 @@ const CinematchScreen: React.FC = () => {
 
   // Added <number[]> to strictly type the array of selected indices
   const [selected, setSelected] = useState<number[]>([]);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Added type annotation for the index parameter
-  const toggleService = (index: number): void => {
+  const toggleGenre = (index: number): void => {
     if (selected.includes(index)) {
       setSelected(selected.filter((i) => i !== index));
     } else {
       setSelected([...selected, index]);
     }
   };
+
+  const handleContinue = async () => {
+    if (selected.length === 0) {
+      alert('Please select at least one streaming service to continue.');
+      return
+    }
+
+    const selectedGenres = selected.map(index => genreList[index]);
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const storedUser = localStorage.getItem("user");
+
+      if (!storedUser) {
+        setError('No user data found. Please sign in again.');
+        setIsLoading(false);
+        return;
+      }
+
+      const payload = { 
+        favGenres: selectedGenres
+      };
+
+      const user = JSON.parse(storedUser);
+      
+
+      const response = await fetch(`http://localhost:8080/api/users/${user._id}/genres`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save genres. Please try again.');
+      }
+
+      user.FavGenre = selectedGenres;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate('/rating');
+
+    } catch (error) {
+      console.error('Error occurred while saving user data:', error);
+      setError('An error occurred while saving your preferences. Please try again.');
+      setIsLoading(false);
+    }
+
+
+  }
 
   return (
     <div className="flex flex-col min-h-screen font-sans">
@@ -68,7 +123,7 @@ const CinematchScreen: React.FC = () => {
               return (
                 <button
                   key={index}
-                  onClick={() => toggleService(index)}
+                  onClick={() => toggleGenre(index)}
                   className={`flex items-center gap-2 py-4 px-9 rounded-full border cursor-pointer transition-all duration-200 ease-in-out
                     ${isSelected 
                       ? 'border-[#E85D22] text-white bg-[#E85D22]/10' 
@@ -92,7 +147,7 @@ const CinematchScreen: React.FC = () => {
               <button className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-2 cursor-pointer" onClick={() => navigate('/services')}>
                 <span>&larr;</span> Back
               </button>
-              <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2 cursor-pointer">
+              <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2 cursor-pointer" onClick={() => handleContinue()}>
                 Continue <span>&rarr;</span>
               </button>
             </div>
