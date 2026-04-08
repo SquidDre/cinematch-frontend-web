@@ -8,20 +8,14 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 const SplashScreen: React.FC = () => {
   // A reusable block for the marquee so we can duplicate it for an infinite loop
-  const Navigate = useNavigate();
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here is where we will eventually call your backend API!
-    console.log("Submitting:", { firstName, lastName, email, password });
-    Navigate("/services");
-  };
-  
+
+  const navigate = useNavigate();
+
   
   const [ firstName, setFirstName ] = React.useState('');
   const [ lastName, setLastName ] = React.useState('');
   const [ email, setEmail ] = React.useState('');
   const [ password, setPassword ] = React.useState('');
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -41,6 +35,11 @@ const SplashScreen: React.FC = () => {
         Password: password
       };
 
+      if (password.length < 8) {
+          setError('Password must be at least 8 characters long.');
+          setIsLoading(false);
+          return;
+      }
 
       try {
           const response = await fetch('http://localhost:8080/api/auth/signup', {
@@ -213,6 +212,15 @@ const SplashScreen: React.FC = () => {
             <p className="text-gray-400 text-md mb-2 mt-4 font-bold">
                 PASSWORD
             </p>
+            {error && (
+                <div className="mb-6 bg-red-500/10 p-4 rounded-lg border border-red-500/20 flex items-start gap-3">
+                    {/* Optional warning icon to make it look nice */}
+                    
+                    <p className="text-red-500 text-sm leading-relaxed">
+                        {error}
+                    </p>
+                </div>
+            )}
             <div className = "relative mb-1">
                 <input
                     type="password"

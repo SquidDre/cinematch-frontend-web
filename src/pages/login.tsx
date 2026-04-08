@@ -47,7 +47,7 @@ const Login: React.FC = () => {
 
             } else {
                 console.error('Login failed:', data);
-                setError(data.message || 'Login failed');
+                setError(data.message || 'The email or password you entered is incorrect. Please try again.');
             }
         } catch (err) {
             console.error('Error during login:', err);
@@ -155,6 +155,7 @@ const Login: React.FC = () => {
                                 Password
                             </p>
                             <div className = "relative mb-1">
+                                
                                 <input
                                     type = {showPassword ? 'text' : 'password'}
                                     placeholder = "Enter your password"
@@ -177,7 +178,15 @@ const Login: React.FC = () => {
                                 className="text-right pr-4 text-[#E85D22] text-sm font-semibold hover:underline cursor-pointer mb-10 mt-2">
                                 Forgot password?
                             </p>
-
+                            {error && (
+                                <div className="mb-6 bg-red-500/10 p-4 rounded-lg border border-red-500/20 flex items-start gap-3">
+                                    {/* Optional warning icon to make it look nice */}
+                                    
+                                    <p className="text-red-500 text-sm leading-relaxed">
+                                        {error}
+                                    </p>
+                                </div>
+                            )}
                             {/* Sign in button */}
                             <button
                                 type = "submit"

@@ -27,7 +27,7 @@ const CinematchScreen: React.FC = () => {
 
   const handleContinue = async () => {
     if (selected.length === 0) {
-      alert('Please select at least one streaming service to continue.');
+      setError('Please select at least one streaming service to continue.');
       return
     }
 
@@ -67,7 +67,7 @@ const CinematchScreen: React.FC = () => {
       user.Services = selectedServices;
       localStorage.setItem("user", JSON.stringify(user));
 
-      navigate('/favorites');
+      navigate('/genres');
 
     } catch (error) {
       console.error('Error occurred while saving user data:', error);
@@ -110,6 +110,15 @@ const CinematchScreen: React.FC = () => {
         <p className="text-gray-400 text-lg mb-12">
           We'll only show you movies you can actually watch
         </p>
+        {error && (
+                  <div className="mb-6 bg-red-500/10 p-4 rounded-lg border border-red-500/20 flex items-start gap-3">
+                      {/* Optional warning icon to make it look nice */}
+                      
+                      <p className="text-red-500 text-sm leading-relaxed">
+                          {error}
+                      </p>
+                  </div>
+              )}
 
         {/* Replace the grid div with this so each button has their own width depending on their content */}
         <div className="flex flex-wrap gap-4 mb-24">

@@ -26,7 +26,7 @@ const CinematchScreen: React.FC = () => {
 
   const handleContinue = async () => {
     if (selected.length === 0) {
-      alert('Please select at least one streaming service to continue.');
+      setError('Please select at least one genre to continue.');
       return
     }
 
@@ -96,6 +96,7 @@ const CinematchScreen: React.FC = () => {
               <p className="text-gray-400 text-lg mb-12">
               Pick your genres, We'll tailor your picks to match your tastes.
               </p>
+              
           </div>
           <div className="text-md text-gray-400 ml-4 mb-8 mt-auto tracking-wide">
             Step <span className=" font-bold">2</span> of 3
@@ -110,6 +111,15 @@ const CinematchScreen: React.FC = () => {
           <p className="text-[#E85D22] text-lg font-bold tracking-widest uppercase mb-6">
             Select all that apply
           </p>
+          {error && (
+              <div className="mb-6 bg-red-500/10 p-4 rounded-lg border border-red-500/20 flex items-start gap-3">
+                  {/* Optional warning icon to make it look nice */}
+                  
+                  <p className="text-red-500 text-sm leading-relaxed">
+                      {error}
+                  </p>
+              </div>
+          )}
 
           {/* Hero Typography */}
           
