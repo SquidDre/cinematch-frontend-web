@@ -7,11 +7,13 @@ import Rating from './pages/signup/rating'
 import ForgotPassword from "./pages/forgot-password.tsx";
 import Verify from './pages/signup/verify'
 import Genres from './pages/signup/genres.tsx'
+import HomePage from './pages/HomePage'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/home" element={<HomePage />} />
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<Create />} />
         <Route path="/verify" element={<Verify />} />
