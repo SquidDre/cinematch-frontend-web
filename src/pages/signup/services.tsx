@@ -13,6 +13,8 @@ const CinematchScreen: React.FC = () => {
 
   // Added <number[]> to strictly type the array of selected indices
   const [selected, setSelected] = useState<number[]>([]);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Added type annotation for the index parameter
   const toggleService = (index: number): void => {
@@ -22,6 +24,55 @@ const CinematchScreen: React.FC = () => {
       setSelected([...selected, index]);
     }
   };
+
+  const handleContinue = () => {
+    if (selected.length === 0) {
+      alert('Please select at least one streaming service to continue.');
+      return
+    }
+
+    const selectedServices = selected.map(index => servicesList[index]);
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const storedUser = localStorage.getItem("user");
+
+      if (!storedUser) {
+        setError('No user data found. Please sign in again.');
+        setIsLoading(false);
+        return;
+      }
+
+      const payload = {
+        services: selectedServices
+      };
+
+      const user = JSON.parse(storedUser);
+      
+
+      const response = fetch(`http://localhost:8080/api/users/${user._id}/services`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      user.Services = selectedServices;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate('/favorites');
+
+    } catch (error) {
+      console.error('Error occurred while saving user data:', error);
+      setError('An error occurred while saving your preferences. Please try again.');
+      setIsLoading(false);
+    }
+
+
+  }
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-[#E85D22] selection:text-white">
@@ -89,7 +140,7 @@ const CinematchScreen: React.FC = () => {
               <span>&larr;</span> Back
             </button>
             <button className="bg-[#E85D22] hover:bg-[#d04e1b] text-white px-8 py-3.5 rounded-full font-bold transition-colors flex items-center gap-2 cursor-pointer"
-            onClick={() => navigate('/favorites')}>
+            onClick={() => handleContinue()}>
               Continue <span>&rarr;</span>
             </button>
           </div>
