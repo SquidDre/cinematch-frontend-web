@@ -15,12 +15,67 @@ const SplashScreen: React.FC = () => {
     console.log("Submitting:", { firstName, lastName, email, password });
     Navigate("/services");
   };
+  
+  
   const [ firstName, setFirstName ] = React.useState('');
   const [ lastName, setLastName ] = React.useState('');
   const [ email, setEmail ] = React.useState('');
   const [ password, setPassword ] = React.useState('');
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+
+
+  const handleSignup = async (e : React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setIsLoading(true);
+      setError('');
+
+      //this matches the authController.js login function in the backend
+      const payload = {
+        FirstName: firstName,
+        LastName: lastName,
+        Login: email,
+        Password: password
+      };
+
+
+      try {
+          const response = await fetch('http://localhost:8080/api/auth/signup', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+              console.log('Sign Up successful:', data);
+
+              //saves the user data to local storage
+              localStorage.setItem("user", JSON.stringify(data));
+
+              //redirects to the home page
+              navigate('/');
+
+
+          } else {
+              console.error('Sign Up failed:', data);
+              setError(data.message || 'Sign Up failed');
+          }
+      } catch (err) {
+          console.error('Error during sign up:', err);
+          setError('An error occurred during sign up');
+      } finally {
+          setIsLoading(false);
+      }
+
+
+  }
 
   const MarqueeContent = () => (
     <div className="flex items-center space-x-6 px-3">
@@ -111,7 +166,7 @@ const SplashScreen: React.FC = () => {
             <p className="text-gray-400 text-lg mb-12">
               Rate what you've seen. Tell us your streaming services. We do the rest.
             </p>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSignup}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4"> 
                 <div className="flex flex-col">
 
@@ -146,7 +201,7 @@ const SplashScreen: React.FC = () => {
             </p>
 
             <input
-                type="text"
+                type="email"
                 placeholder="eg. john.doe@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -179,7 +234,8 @@ const SplashScreen: React.FC = () => {
 
               {/* Create account button */}
               <button
-                  onClick={() => navigate('/verify')}
+                  type="submit"
+                  disabled={loading}
                   className = "w-full py-4 rounded-full bg-[#E85D22] text-white font-bold text-lg hover:bg-[#d0521e] transition-colors duration-200"
               >
                   Create account →
