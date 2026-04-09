@@ -1,4 +1,4 @@
-import{ BrowserRouter, Routes, Route} from 'react-router-dom'
+import{ BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
 import Services from './pages/signup/services'
 import Splash from './pages/splash'
 import Create from './pages/signup/create'
@@ -18,15 +18,25 @@ function App() {
       <Routes>
       
         <Route path="/" element={user ? <Home /> : <Splash />} />
-        <Route path="/home" element={<Home />} />
+        
         <Route path="/splash" element={<Splash />} />
         <Route path="/create" element={<Create />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/rating" element={<Rating />} />
+
+        {/* The following routes are protected and will only render if the user is authenticated. Otherwise, they will redirect to the splash page. */}
+        {/* if you need to test these routes, uncomment them and ensure the user is authenticated */}
+
+        {/* <Route path="/rating" element={<Rating />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/genres" element={<Genres />} />
+        <Route path="/genres" element={<Genres />} /> */}
+
+        <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
+        <Route path="/rating" element={user ? <Rating /> : <Navigate to="/" />} />
+        <Route path="/services" element={user ? <Services /> : <Navigate to="/" />} />
+        <Route path="/genres" element={user ? <Genres /> : <Navigate to="/" />} />
 
       </Routes>
     </BrowserRouter>

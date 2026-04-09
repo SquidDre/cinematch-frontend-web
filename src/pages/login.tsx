@@ -41,8 +41,8 @@ const Login: React.FC = () => {
                 //saves the user data to local storage
                 localStorage.setItem("user", JSON.stringify(data));
 
-                //redirects to the home page
-                navigate('/');
+                //forces the page to reload so that the user data is properly loaded in the app
+                window.location.href = '/';
 
 
             } else {
