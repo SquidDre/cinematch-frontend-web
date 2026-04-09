@@ -16,12 +16,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
-        if (user) {
-          <Route path="/" element={<Home />} />
-        } else {
-          <Route path="/" element={<Splash />} />
-        }
+      
+        <Route path="/" element={user ? <Home /> : <Splash />} />
         <Route path="/home" element={<Home />} />
         <Route path="/splash" element={<Splash />} />
         <Route path="/create" element={<Create />} />

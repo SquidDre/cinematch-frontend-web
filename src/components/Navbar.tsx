@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
   // Handle Logout safely
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/");
+    navigate("/login");
   };
 
   return (
