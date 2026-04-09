@@ -198,7 +198,7 @@ const RateMoviesScreen: React.FC = () => {
                       onMouseEnter={() => setHoveredStar(star)}
                       onMouseLeave={() => setHoveredStar(null)}
                       onClick={() => rateMovie(star)}
-                      className="transition-transform hover:scale-110 focus:outline-none"
+                      className="transition-transform hover:scale-110 focus:outline-none cursor-pointer"
                     >
                       {(hoveredStar !== null && star <= hoveredStar) ? (
                         <StarSolid className="w-8 h-8 text-[#E85D22]" />
@@ -223,7 +223,7 @@ const RateMoviesScreen: React.FC = () => {
 
                 <button 
                   onClick={skipMovie}
-                  className="bg-[#E85D22] text-white text-xs font-bold uppercase tracking-wider px-6 py-2 rounded-full hover:bg-[#d04e1b] transition-colors"
+                  className="bg-[#E85D22] text-white text-xs font-bold cursor-pointer uppercase tracking-wider px-6 py-2 rounded-full hover:bg-[#d04e1b] transition-colors"
                 >
                   Skip
                 </button>
