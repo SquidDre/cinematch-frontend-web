@@ -1,15 +1,49 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isAccountMenuOpen, setAccountMenuOpen] = useState(false);
 
-  // Helper to check if a link is active to apply the white text
+  // Helper to check if a link is active
   const isActive = (path: string) => location.pathname === path;
-  const [isAccountMenuOpen, setAccountMenuOpen] = React.useState(false);
+
+  // 1. Set up variables for the name display
+  let initials = "U"; // Default fallback
+  let displayName = "User";
+
+  // 2. Parse the user safely
+  try {
+    const storedUser = localStorage.getItem("user");
+    
+    if (storedUser) {
+      const user = JSON.parse(storedUser); // Turn the string back into an object
+      
+      const first = user.FirstName || "";
+      const last = user.LastName || "";
+
+      // Create "JD" format safely
+      if (first && last) {
+        initials = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+        displayName = `${first} ${last.charAt(0)}.`; // Creates "John D."
+      } else if (first) {
+        initials = first.charAt(0).toUpperCase();
+        displayName = first;
+      }
+    }
+  } catch (error) {
+    console.error('Error occurred while fetching user data:', error);
+  }
+
+  // Handle Logout safely
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
   return (
-    <nav className="w-full flex items-center justify-between px-8 py-6 bg-[#0a0a0a] border-b border-white/5 ">
+    <nav className="w-full flex items-center justify-between px-8 py-6 bg-[#0a0a0a] border-b border-white/5 relative">
       {/* Left: Logo */}
       <div className="text-xl font-bold tracking-[0.2em] text-gray-400 cursor-pointer">
         CINEMATCH
@@ -32,24 +66,30 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Right: User Profile */}
-      <div className="flex items-center gap-3 cursor-pointer mr-8">
+      <div className="flex items-center gap-3 cursor-pointer mr-8 relative">
         <button onClick={() => setAccountMenuOpen(prev => !prev)} className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#E85D22] flex items-center justify-center text-white text-xs font-bold">
-            JD
+          {/* Dynamically injected Initials */}
+          <div className="w-8 h-8 rounded-full bg-[#E85D22] flex items-center justify-center text-white text-xs font-bold uppercase">
+            {initials}
           </div>
-          <span className="text-gray-300 text-sm hidden sm:block hover:text-white transition-colors">
-            John D.
+          {/* Dynamically injected Display Name */}
+          <span className="text-gray-300 text-sm hidden sm:block hover:text-white transition-colors capitalize">
+            {displayName}
           </span>
         </button>
+
         {/* Account Dropdown */}
         {isAccountMenuOpen && (
-          <div className="absolute right-0 top-20 bg-[#141414] border border-white/10 rounded shadow-lg py-2 w-48 z-40">
+          <div className="absolute right-0 top-12 mt-2 bg-[#141414] border border-white/10 rounded shadow-lg py-2 w-48 z-50">
             <Link to="/account" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
               Settings
             </Link>
-            <Link to="/" className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="w-full text-left block px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+            >
               Logout
-            </Link>
+            </button>
           </div>
         )}
       </div>

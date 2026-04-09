@@ -4,6 +4,19 @@ import MovieRow_1 from '../components/MovieRow_1';
 import MovieRow_2 from '../components/MovieRow_2';
 
 const HomeScreen: React.FC = () => {
+
+    try {
+        const storedUser = localStorage.getItem("user");
+        
+        if (!storedUser) {
+          console.error('No user data found. Please sign in again.');
+          return null; // Or you could redirect to the login page
+        }
+    } catch (error) {
+        console.error('Error occurred while fetching user data:', error);
+        return null;
+    }
+
     const sampleMovies = [
         {
             id: '1', title: 'Interstellar', platform: 'Netflix', genre: 'SCI-FI', match: '97%',

@@ -1,20 +1,29 @@
 import{ BrowserRouter, Routes, Route} from 'react-router-dom'
 import Services from './pages/signup/services'
-import Home from './pages/splash'
+import Splash from './pages/splash'
 import Create from './pages/signup/create'
 import Login from  './pages/login'
 import Rating from './pages/signup/rating'
 import ForgotPassword from "./pages/forgot-password.tsx";
 import Verify from './pages/signup/verify'
 import Genres from './pages/signup/genres.tsx'
-import HomePage from './pages/HomePage'
+import Home from './pages/home.tsx'
 
 function App() {
+
+  const user = localStorage.getItem('user');
+  
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<Home />} />
+        
+        if (user) {
+          <Route path="/" element={<Home />} />
+        } else {
+          <Route path="/" element={<Splash />} />
+        }
+        <Route path="/home" element={<Home />} />
+        <Route path="/splash" element={<Splash />} />
         <Route path="/create" element={<Create />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/login" element={<Login />} />
