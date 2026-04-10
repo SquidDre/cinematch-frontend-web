@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
@@ -45,13 +45,13 @@ const Navbar: React.FC = () => {
   return (
     <nav className="w-full flex items-center justify-between px-8 py-6 bg-[#0a0a0a] border-b border-white/5 relative">
       {/* Left: Logo */}
-      <div className="text-xl font-bold tracking-[0.2em] text-gray-400 cursor-pointer">
+      <Link to="/" className="text-xl font-bold tracking-[0.2em] text-gray-400 cursor-pointer">
         CINEMATCH
-      </div>
+      </Link>
 
       {/* Center: Navigation Links */}
       <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-        <Link to="/home" className={`${isActive('/home') ? 'text-white' : 'text-gray-400 hover:text-gray-200'} transition-colors`}>
+        <Link to="/" className={`${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-gray-200'} transition-colors`}>
           Home
         </Link>
         <Link to="/search" className={`${isActive('/search') ? 'text-white' : 'text-gray-400 hover:text-gray-200'} transition-colors`}>

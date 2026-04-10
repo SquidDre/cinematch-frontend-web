@@ -18,7 +18,7 @@ const mockResults = [
   },
   {
     id: 2,
-    title: 'Interstellar',
+    title: 'Marty Supreme',
     director: 'Christopher Nolan',
     year: '2014',
     duration: '2h 49m',
@@ -30,7 +30,7 @@ const mockResults = [
   },
   {
     id: 3,
-    title: 'Interstellar',
+    title: 'World',
     director: 'Christopher Nolan',
     year: '2014',
     duration: '2h 49m',
