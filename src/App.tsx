@@ -8,6 +8,7 @@ import ForgotPassword from "./pages/forgot-password.tsx";
 import Verify from './pages/signup/verify'
 import Genres from './pages/signup/genres.tsx'
 import Home from './pages/home.tsx'
+import Search from './pages/search.tsx'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/verify" element={<Verify />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/search" element={<Search />} />
 
         {/* The following routes are protected and will only render if the user is authenticated. Otherwise, they will redirect to the splash page. */}
         {/* if you need to test these routes, uncomment them and ensure the user is authenticated */}
