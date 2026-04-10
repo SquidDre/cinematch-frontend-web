@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StarIcon as StarOutline } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
 // --- DUMMY DATA ---
@@ -44,6 +43,8 @@ const RateMoviesScreen: React.FC = () => {
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
   const [isFading, setIsFading] = useState(false);
   const [ratings, setRatings] = useState<Record<string, number | 'skipped'>>({});
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const currentMovie = MOVIE_QUEUE[currentIndex];
   const totalMovies = MOVIE_QUEUE.length; 
@@ -61,7 +62,46 @@ const RateMoviesScreen: React.FC = () => {
     }, 300);
   };
 
-  const rateMovie = (rating: number) => {
+  const rateMovie = async (rating: number) => {
+
+    setIsLoading(true);
+    setError('');
+    try {
+      const storedUser = localStorage.getItem("user");
+    
+      if (!storedUser) {
+        setError('No user data found. Please sign in again.');
+        setIsLoading(false);
+        return;
+      }
+      
+      const user = JSON.parse(storedUser);
+
+      const payload = { 
+        userId: user._id,
+        movieId: currentMovie.id,
+        rating: rating,
+        CreatedAt: new Date().toISOString()
+      }
+
+      const response = await fetch('http://localhost:8080/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit rating. Please try again.');
+      }
+
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+
     handleNextMovie(() => {
       setRatings((prev) => ({ ...prev, [currentMovie.id]: rating }));
     });
