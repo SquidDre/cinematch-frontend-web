@@ -1,52 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
-// Mock data to populate the UI until your API is hooked up
-const mockResults = [
-  {
-    id: 1,
-    title: 'Interstellar',
-    director: 'Christopher Nolan',
-    year: '2014',
-    duration: '2h 49m',
-    rating: 'PG-13',
-    genres: ['Sci-fi', 'Adventure'],
-    match: 97,
-    services: ['Netflix', 'Hulu'],
-    image: 'https://image.tmdb.org/t/p/w1280/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg' // Standard TMDB poster path
-  },
-  {
-    id: 2,
-    title: 'Marty Supreme',
-    director: 'Christopher Nolan',
-    year: '2014',
-    duration: '2h 49m',
-    rating: 'PG-13',
-    genres: ['Sci-fi', 'Adventure'],
-    match: 97,
-    services: ['Netflix', 'Hulu'],
-    image: 'https://image.tmdb.org/t/p/w1280/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg'
-  },
-  {
-    id: 3,
-    title: 'World',
-    director: 'Christopher Nolan',
-    year: '2014',
-    duration: '2h 49m',
-    rating: 'PG-13',
-    genres: ['Sci-fi', 'Adventure'],
-    match: 97,
-    services: ['Netflix', 'Hulu'],
-    image: 'https://image.tmdb.org/t/p/w1280/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg'
-  }
-];
+// TMDB uses IDs for genres. We map them to text here so we don't need a separate API call.
+const GENRE_MAP: { [key: number]: string } = {
+  28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
+  99: "Documentary", 18: "Drama", 10751: "Family", 14: "Fantasy", 36: "History",
+  27: "Horror", 10402: "Music", 9648: "Mystery", 10749: "Romance", 878: "Sci-Fi",
+  10770: "TV Movie", 53: "Thriller", 10752: "War", 37: "Western"
+};
+
+// Define our movie type based on the UI needs
+interface MovieResult {
+  id: number;
+  title: string;
+  year: string;
+  genres: string[];
+  match: number;
+  image: string;
+  director?: string;
+  duration?: string;
+  services?: string[];
+}
 
 const Search: React.FC = () => {
-
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('All services');
+    const [searchResults, setSearchResults] = useState<MovieResult[]>([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -56,9 +37,61 @@ const Search: React.FC = () => {
         'Highest Match', 'Recently Added'
     ];
 
+
+
+    // --- Search Fetching Logic with Debounce ---
+    useEffect(() => {
+        // If search is empty, clear results and don't fetch
+        if (!searchQuery.trim()) {
+            setSearchResults([]);
+            return;
+        }
+
+        // Set a delay so we don't spam the API on every keystroke
+        const delayDebounceFn = setTimeout(async () => {
+            setIsLoading(true);
+            try {
+                // IMPORTANT: Replace this with your actual TMDB API Key, preferably from an .env file
+                const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+                
+                const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(searchQuery)}&language=en-US&page=1`);
+                
+                if (!response.ok) throw new Error('Failed to fetch from TMDB');
+                
+                const data = await response.json();
+
+                // Format TMDB data to match your UI requirements
+                if (data.results) {
+                    const formattedResults: MovieResult[] = data.results.map((movie: any) => ({
+                        id: movie.id,
+                        title: movie.title,
+                        year: movie.release_date ? movie.release_date.split('-')[0] : 'N/A', // Extract just the year
+                        // Map TMDB genre IDs to text, filter out undefined ones, and take max 3
+                        genres: movie.genre_ids ? movie.genre_ids.map((id: number) => GENRE_MAP[id]).filter(Boolean).slice(0, 3) : [],
+                        match: movie.vote_average ? Math.round(movie.vote_average * 10) : 0, // Convert 7.5 to 75
+                        image: movie.poster_path 
+                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+                            : 'https://via.placeholder.com/500x750/151515/FFFFFF?text=No+Poster', // Fallback image
+                        // These are not provided by the basic TMDB search endpoint:
+                        director: 'N/A', 
+                        duration: 'N/A', 
+                        services: ['Check Provider'] 
+                    }));
+                    
+                    setSearchResults(formattedResults);
+                }
+            } catch (err) {
+                console.error("Search error:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        }, 500); // Wait 500ms after user stops typing to fetch
+
+        return () => clearTimeout(delayDebounceFn); // Cleanup on unmount or re-render
+    }, [searchQuery]);
+
+    // --- Watchlist Logic ---
     const handleAddWatchlist = async (movieId: number) => {
-        // Implement your logic to add the movie to the user's watchlist
-        console.log(`Adding movie with ID ${movieId} to watchlist`);
         setIsLoading(true);
         setError('');
 
@@ -91,8 +124,6 @@ const Search: React.FC = () => {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to add to watchlist');
             }
-
-            // Optionally, you can update the UI or show a success message here
             console.log('Movie added to watchlist successfully');
         } catch (err: any) {
             setError(err.message || 'An unexpected error occurred');
@@ -104,11 +135,8 @@ const Search: React.FC = () => {
     return (
         <div className="min-h-screen bg-black text-white font-sans selection:bg-[#E85D22] selection:text-white">
         
-        {/* Navigation Bar */}
-        
         <Navbar />
 
-        {/* Main Content */}
         <main className="mx-auto px-32 pt-16 pb-24">
             
             {/* Hero Section */}
@@ -127,18 +155,23 @@ const Search: React.FC = () => {
             {/* Search Bar */}
             <div className="relative mb-8">
             <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                {/* Search Icon */}
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </div>
             <input
                 type="text"
-                placeholder="Search anything..."
+                placeholder="Search movies by title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border border-white/20 rounded-full py-4 pl-14 pr-6 text-white placeholder-gray-500 focus:outline-none focus:border-[#E85D22] transition-colors"
             />
+            {/* Loading Indicator */}
+            {isLoading && searchQuery && (
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                    Searching...
+                </div>
+            )}
             </div>
 
             {/* Filter Pills */}
@@ -165,9 +198,23 @@ const Search: React.FC = () => {
             })}
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-lg mb-8">
+                    {error}
+                </div>
+            )}
+
             {/* Results List */}
             <div className="flex flex-col gap-4">
-            {mockResults.map((movie) => (
+            
+            {!isLoading && searchQuery && searchResults.length === 0 && (
+                <div className="text-gray-400 text-center py-12">
+                    No movies found matching "{searchQuery}"
+                </div>
+            )}
+
+            {searchResults.map((movie) => (
                 <div key={movie.id} className="flex flex-col md:flex-row bg-[#151515] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors">
                 
                 {/* Movie Poster */}
@@ -184,7 +231,7 @@ const Search: React.FC = () => {
                     <div>
                     <h2 className="text-3xl font-serif font-bold mb-2">{movie.title}</h2>
                     <p className="text-gray-400 text-sm mb-4">
-                        {movie.director} · {movie.year} · {movie.duration} · {movie.rating}
+                        {movie.year} {movie.director !== 'N/A' && `· ${movie.director}`} {movie.duration !== 'N/A' && `· ${movie.duration}`}
                     </p>
                     <div className="flex gap-2">
                         {movie.genres.map((genre, idx) => (
@@ -199,10 +246,17 @@ const Search: React.FC = () => {
                 {/* Right Side Actions */}
                 <div className="p-6 flex flex-col items-start md:items-end justify-between border-t md:border-t-0 md:border-l border-white/5 md:w-64">
                     <div className="text-left md:text-right w-full mb-4 md:mb-0">
-                    <div className="text-4xl font-serif text-[#E85D22] mb-1">{movie.match}%</div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
-                        {movie.services.join(' · ')}
-                    </div>
+                    {movie.match > 0 ? (
+                        <div className="text-4xl font-serif text-[#E85D22] mb-1">{movie.match}%</div>
+                    ) : (
+                        <div className="text-lg font-serif text-gray-500 mb-1 mt-2">Unrated</div>
+                    )}
+                    
+                    {movie.services && movie.services.length > 0 && (
+                        <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+                            {movie.services.join(' · ')}
+                        </div>
+                    )}
                     </div>
                     
                     <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 text-sm font-medium hover:bg-white/5 transition-colors w-full md:w-auto justify-center" onClick={() => handleAddWatchlist(movie.id)}>
