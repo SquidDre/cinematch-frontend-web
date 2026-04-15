@@ -10,34 +10,38 @@ import Genres from './pages/signup/genres.tsx'
 import Home from './pages/home.tsx'
 import MovieDetail from './pages/movie-detail'
 import Watchlist from './pages/watchlist'
+import Search from './pages/search.tsx'
 
 function App() {
 
   const user = localStorage.getItem('user');
 
   return (
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
+      
+        <Route path="/" element={user ? <Home /> : <Splash />} />
+        
+        <Route path="/splash" element={<Splash />} />
+        <Route path="/create" element={<Create />} />
+        <Route path="/verify" element={<Verify />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/search" element={<Search />} />
 
-          <Route path="/" element={user ? <Home /> : <Splash />} />
+        <Route path="/" element={user ? <Home /> : <Splash />} />
 
-          <Route path="/splash" element={<Splash />} />
-          <Route path="/create" element={<Create />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* The following routes are protected and will only render if the user is authenticated. Otherwise, they will redirect to the splash page. */}
+        {/* if you need to test these routes, uncomment them and ensure the user is authenticated */}
 
-          {/* The following routes are protected and will only render if the user is authenticated. Otherwise, they will redirect to the splash page. */}
-          {/* if you need to test these routes, uncomment them and ensure the user is authenticated */}
-
-          {/*
-          <Route path="/rating" element={<Rating />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/genres" element={<Genres />} />
-          <Route path="/movie/:id" element={<MovieDetail />} />
-          <Route path="/watchlist" element={<Watchlist />} />
-          */}
+        {/*
+        <Route path="/rating" element={<Rating />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/genres" element={<Genres />} />
+        <Route path="/movie/:id" element={<MovieDetail />} />
+        <Route path="/watchlist" element={<Watchlist />} />
+        */}
 
         <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
         <Route path="/rating" element={user ? <Rating /> : <Navigate to="/" />} />
