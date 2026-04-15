@@ -9,6 +9,7 @@ import Verify from './pages/signup/verify'
 import Genres from './pages/signup/genres.tsx'
 import Home from './pages/home.tsx'
 import MovieDetail from './pages/movie-detail'
+import Watchlist from './pages/watchlist'
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/genres" element={<Genres />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/watchlist" element={<Watchlist />} />
           */}
 
         <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
@@ -42,6 +44,7 @@ function App() {
         <Route path="/services" element={user ? <Services /> : <Navigate to="/" />} />
         <Route path="/genres" element={user ? <Genres /> : <Navigate to="/" />} />
         <Route path="/movie/:id" element={user ? <MovieDetail /> : <Navigate to="/" />} />
+        <Route path="/watchlist" element={user ? <Watchlist /> : <Navigate to="/" />} />
 
         </Routes>
       </BrowserRouter>
