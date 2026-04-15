@@ -13,17 +13,23 @@ interface MovieData {
 interface MovieRowProps {
     movies: MovieData[];
     title: string;
+    isLoading: boolean;
 }
 
-const MovieRow: React.FC<MovieRowProps> = ({ movies, title }) => {
+const MovieRow: React.FC<MovieRowProps> = ({ movies, title, isLoading }) => {
     return (
         <div className="flex flex-col mb-12 w-full">
 
             <h2 className="text-[#E85D22] text-sm font-bold tracking-widest uppercase mb-6">
                 {title}
             </h2>
-            
-            <div className="flex gap-6 overflow-x-auto snap-x snap-mandaroy snap-mandatory 
+            {isLoading ? (
+                // THE SPINNER
+                <div className="flex items-center justify-start h-50">
+                    <div className="w-16 h-16 border-4 border-white/10 border-t-[#E85D22] rounded-full animate-spin items-center justify-center "></div>
+                </div>
+            ) : (
+                <div className="flex gap-6 overflow-x-auto snap-x snap-mandaroy snap-mandatory 
                    [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {movies.map(movie => (
                     <MovieCard
@@ -35,7 +41,8 @@ const MovieRow: React.FC<MovieRowProps> = ({ movies, title }) => {
                         posterUrl={movie.posterUrl}
                     />
                 ))}
-            </div>
+                </div>
+            )}
         </div>
     );
 };
