@@ -1,54 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
-// --- DUMMY DATA ---
-const MOVIE_QUEUE = [
-  {
-    id: '1',
-    title: 'Interstellar',
-    director: 'Christopher Nolan',
-    year: '2014',
-    duration: '2H 49M',
-    genres: ['Sci-Fi', 'Adventure'],
-    poster: 'https://image.tmdb.org/t/p/w1280/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg', 
-  },
-  {
-    id: '2',
-    title: 'Everything Everywhere All at Once',
-    director: 'Daniel Kwan, Daniel Scheinert',
-    year: '2022',
-    duration: '2H 19M',
-    genres: ['Action', 'Comedy'],
-    poster: 'https://image.tmdb.org/t/p/w1280/u68AjlvlutfEIcpmbYpKcdi09ut.jpg',
-  },
-  {
-    id: '3',
-    title: 'Spider-Man: Into the Spider-Verse',
-    director: 'Bob Persichetti, Peter Ramsey',
-    year: '2018',
-    duration: '1H 57M',
-    genres: ['Animation', 'Action'],
-    poster: 'https://image.tmdb.org/t/p/original/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg',
-  }
-];
-
 const RateMoviesScreen: React.FC = () => {
   const navigate = useNavigate();
-  const [isCardShrunk, setIsCardShrunk] = useState(false);
-
   
   // --- STATE ---
+  const [isCardShrunk, setIsCardShrunk] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
   const [isFading, setIsFading] = useState(false);
   const [ratings, setRatings] = useState<Record<string, number | 'skipped'>>({});
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Data States
+  const [movieQueue, setMovieQueue] = useState<any[]>([]);
+  const [isFetchingMovies, setIsFetchingMovies] = useState(true);
 
-  const currentMovie = MOVIE_QUEUE[currentIndex];
-  const totalMovies = MOVIE_QUEUE.length; 
-  const isFinished = currentIndex >= totalMovies;
+  // --- DYNAMIC VARIABLES ---
+  // FIXED: Actually pulls from the movieQueue state!
+  const currentMovie = movieQueue[currentIndex];
+  const totalMovies = movieQueue.length; 
+  // FIXED: Added totalMovies > 0 so it doesn't show "Finished" while loading
+  const isFinished = totalMovies > 0 && currentIndex >= totalMovies;
+
+  useEffect(() => {
+    const fetchInitialMovies = async () => {
+      try {
+        // FIXED: Replaced process.env. Paste your actual key right here:
+        const TMDBurl = `https://api.themoviedb.org/3/movie/popular?api_key=d2c567d06a9f2e7bb934f8d35525de0e&language=en-US&page=1`;
+        const response = await fetch(TMDBurl);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch movies. Please try again later.');
+        }
+
+        const data = await response.json();
+
+        const formattedMovies = data.results.slice(0, 8).map((movie: any) => ({
+          id: movie.id,
+          title: movie.title,
+          year: movie.release_date ? movie.release_date.substring(0, 4) : 'N/A',
+          poster: movie.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+            : 'https://via.placeholder.com/500x750?text=No+Poster',
+          director: 'Tap for details', 
+          genres: ['Popular']
+        }));
+
+        setMovieQueue(formattedMovies);
+        
+      } catch (err: any) {
+        setError(err.message || 'An unexpected error occurred while fetching movies.');
+      } finally {
+        setIsFetchingMovies(false);
+      }
+    };
+    
+    fetchInitialMovies();
+  }, []);
 
   // --- HANDLERS ---
   const handleNextMovie = (action: () => void) => {
@@ -58,12 +69,11 @@ const RateMoviesScreen: React.FC = () => {
       setCurrentIndex((prev) => prev + 1);
       setIsFading(false);
       setHoveredStar(null);
-      setIsCardShrunk(false); //reset the large poster for next
+      setIsCardShrunk(false); // reset the large poster for next
     }, 300);
   };
 
   const rateMovie = async (rating: number) => {
-
     setIsLoading(true);
     setError('');
     try {
@@ -118,6 +128,18 @@ const RateMoviesScreen: React.FC = () => {
     navigate('/home');
   };
 
+  // --- LOADING SCREEN PROTECTOR ---
+  // FIXED: Prevents the app from crashing while waiting for the TMDB fetch
+  if (isFetchingMovies) {
+    return (
+      <div className="flex min-h-screen bg-black text-white items-center justify-center font-sans">
+        <div className="animate-pulse text-2xl text-[#E85D22] font-serif italic tracking-wider">
+          Fetching your movies...
+        </div>
+      </div>
+    );
+  }
+
   // --- MAIN RENDER ---
   return (
     <div className="flex flex-col min-h-screen font-sans text-white selection:bg-[#E85D22] selection:text-white">
@@ -126,14 +148,13 @@ const RateMoviesScreen: React.FC = () => {
         {/* Left Column */}
         <div className="w-full lg:w-1/2 bg-[#141414] p-8 md:p-16 flex flex-col justify-between lg:border-r lg:border-[#333] min-h-[50vh] lg:min-h-0">
           
-          {/* Header (Left Side) */}
+          {/* Header */}
           <div className="flex justify-between w-full mb-24">
             <div className="text-xl font-bold tracking-[0.2em] ml-4 text-gray-500">
               CINEMATCH
             </div>
-            {/* Step indicator shows on mobile here, hidden on desktop */}
             <div className="text-sm text-gray-500 font-medium tracking-wide">
-              Step <span className = "font-bold">3</span> of 3
+              Step <span className="font-bold">3</span> of 3
             </div>
           </div>
 
@@ -158,17 +179,24 @@ const RateMoviesScreen: React.FC = () => {
               <div className="w-full bg-black border border-[#333] h-2 rounded-full overflow-hidden">
                 <div 
                   className="bg-[#E85D22] h-full transition-all duration-500 ease-out"
-                  style={{ width: `${(currentIndex / totalMovies) * 100}%` }}
+                  style={{ width: totalMovies > 0 ? `${(currentIndex / totalMovies) * 100}%` : '0%' }}
                 ></div>
               </div>
             </div>
+
+            {/* Error Message Display */}
+            {error && (
+              <div className="mt-6 bg-red-500/10 border border-red-500/20 p-4 rounded-lg w-max text-red-500 text-sm">
+                {error}
+              </div>
+            )}
           </div>
 
-          {/* Conditional */}
+          {/* Conditional Layout */}
           <div className={`ml-0 lg:ml-4 transition-opacity duration-500 ease-in-out`}>
             
             {isFinished ? (
-              // The Finale State (Fades in)
+              // The Finale State
               <div className="animate-fade-in-up">
                 <h2 className="text-4xl font-serif italic text-[#E85D22] mb-4">All set!</h2>
                 <p className="text-gray-400 mb-8">We've locked in your tastes.</p>
@@ -183,8 +211,9 @@ const RateMoviesScreen: React.FC = () => {
               // The Normal State (Movie Meta)
               <div className={`${isFading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {currentMovie?.genres.map((genre, idx) => (
-                    <span key={idx} className="px-3 py-1  border-1 border-[#E85D22] bg-[#2A1200] text-white text-xs font-bold uppercase tracking-wider rounded-full">
+                  {/* FIXED: Optional chaining added to prevent map crashes */}
+                  {currentMovie?.genres?.map((genre: string, idx: number) => (
+                    <span key={idx} className="px-3 py-1 border-1 border-[#E85D22] bg-[#2A1200] text-white text-xs font-bold uppercase tracking-wider rounded-full">
                       {genre}
                     </span>
                   ))}
@@ -201,10 +230,9 @@ const RateMoviesScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* --- Right Column: Pure Black Background --- */}
+        {/* --- Right Column --- */}
         <div className="w-full lg:w-1/2 bg-black p-8 md:p-16 flex flex-col items-center justify-center relative min-h-[50vh] lg:min-h-0">
           
-
           {/* The Interactive Card */}
           {!isFinished && currentMovie && (
             <div 
@@ -225,20 +253,21 @@ const RateMoviesScreen: React.FC = () => {
                 />
               </div>
 
-              {/* The Rating UI (Only fades in when card is shrunk) */}
+              {/* The Rating UI */}
               <div className={`flex flex-col items-center w-full transition-all duration-500 ${isCardShrunk ? 'opacity-100 mt-6 h-auto' : 'opacity-0 h-0 overflow-hidden'}`}>
-                <h3 className="text-black font-serif text-2xl mb-1">{currentMovie.title}</h3>
+                <h3 className="text-black font-serif text-2xl mb-1 text-center leading-tight">{currentMovie.title}</h3>
                 <p className="text-gray-400 text-xs mb-4">{currentMovie.director} • {currentMovie.year}</p>
                 
                 {/* Stars */}
                 <div className="flex gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
+                  {[2, 4, 6, 8, 10].map((star) => (
                     <button
                       key={star}
                       onMouseEnter={() => setHoveredStar(star)}
                       onMouseLeave={() => setHoveredStar(null)}
                       onClick={() => rateMovie(star)}
-                      className="transition-transform hover:scale-110 focus:outline-none cursor-pointer"
+                      disabled={isLoading}
+                      className="transition-transform hover:scale-110 focus:outline-none cursor-pointer disabled:opacity-50"
                     >
                       {(hoveredStar !== null && star <= hoveredStar) ? (
                         <StarSolid className="w-8 h-8 text-[#E85D22]" />
@@ -251,19 +280,17 @@ const RateMoviesScreen: React.FC = () => {
 
                 {/* Rating Label */}
                 <p className="text-[#E85D22] text-sm font-semibold mb-4 h-5">
-                  {hoveredStar === 1 && 'Poor'}
-                  {hoveredStar === 2 && 'Fair'}
-                  {hoveredStar === 3 && 'Good'}
-                  {hoveredStar === 4 && 'Great'}
-                  {hoveredStar === 5 && 'Perfect'}
+                  {hoveredStar === 2 && 'Poor'}
+                  {hoveredStar === 4 && 'Fair'}
+                  {hoveredStar === 6 && 'Good'}
+                  {hoveredStar === 8 && 'Great'}
+                  {hoveredStar === 10 && 'Perfect'}
                 </p>
-
-
-
 
                 <button 
                   onClick={skipMovie}
-                  className="bg-[#E85D22] text-white text-xs font-bold cursor-pointer uppercase tracking-wider px-6 py-2 rounded-full hover:bg-[#d04e1b] transition-colors"
+                  disabled={isLoading}
+                  className="bg-[#E85D22] text-white text-xs font-bold cursor-pointer uppercase tracking-wider px-6 py-2 rounded-full hover:bg-[#d04e1b] transition-colors disabled:opacity-50"
                 >
                   Skip
                 </button>
