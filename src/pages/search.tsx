@@ -252,11 +252,6 @@ const Search: React.FC = () => {
                         <div className="text-lg font-serif text-gray-500 mb-1 mt-2">Unrated</div>
                     )}
                     
-                    {movie.services && movie.services.length > 0 && (
-                        <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
-                            {movie.services.join(' · ')}
-                        </div>
-                    )}
                     </div>
                     
                     <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 text-sm font-medium hover:bg-white/5 transition-colors w-full md:w-auto justify-center" onClick={() => handleAddWatchlist(movie.id)}>
