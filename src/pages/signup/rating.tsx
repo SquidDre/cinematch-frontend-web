@@ -29,7 +29,7 @@ const RateMoviesScreen: React.FC = () => {
     const fetchInitialMovies = async () => {
       try {
         // FIXED: Replaced process.env. Paste your actual key right here:
-        const TMDBurl = `https://api.themoviedb.org/3/movie/popular?api_key=d2c567d06a9f2e7bb934f8d35525de0e&language=en-US&page=1`;
+        const TMDBurl = `https://api.themoviedb.org/3/movie/popular?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US&page=1`;
         const response = await fetch(TMDBurl);
 
         if (!response.ok) {
@@ -260,7 +260,7 @@ const RateMoviesScreen: React.FC = () => {
                 
                 {/* Stars */}
                 <div className="flex gap-1 mb-4">
-                  {[2, 4, 6, 8, 10].map((star) => (
+                  {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       onMouseEnter={() => setHoveredStar(star)}
@@ -280,11 +280,11 @@ const RateMoviesScreen: React.FC = () => {
 
                 {/* Rating Label */}
                 <p className="text-[#E85D22] text-sm font-semibold mb-4 h-5">
-                  {hoveredStar === 2 && 'Poor'}
-                  {hoveredStar === 4 && 'Fair'}
-                  {hoveredStar === 6 && 'Good'}
-                  {hoveredStar === 8 && 'Great'}
-                  {hoveredStar === 10 && 'Perfect'}
+                  {hoveredStar === 1 && 'Poor'}
+                  {hoveredStar === 2 && 'Fair'}
+                  {hoveredStar === 3 && 'Good'}
+                  {hoveredStar === 4 && 'Great'}
+                  {hoveredStar === 5 && 'Perfect'}
                 </p>
 
                 <button 

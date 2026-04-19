@@ -21,13 +21,15 @@ const HomeScreen: React.FC = () => {
                 const storedUser = localStorage.getItem("user");
                 if (!storedUser) return;
 
+                const user = JSON.parse(storedUser);
+                const userID = user._id;
                 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
                 // 1. Fetch Recommendations
                 const recResponse = await fetch('/api/recommend/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userID: "69d6b14788ac6679babc0dec" })
+                    body: JSON.stringify({ userID: userID })
                 });
                 const recData = await recResponse.json();
                 

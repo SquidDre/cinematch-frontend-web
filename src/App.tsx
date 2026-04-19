@@ -11,6 +11,7 @@ import Home from './pages/home.tsx'
 import MovieDetail from './pages/movie-detail'
 import Watchlist from './pages/watchlist'
 import Search from './pages/search.tsx'
+import Reviews from './pages/reviews.tsx'
 
 function App() {
 
@@ -43,6 +44,7 @@ function App() {
         <Route path="/watchlist" element={<Watchlist />} />
         */}
 
+        <Route path="/reviews" element={user ? <Reviews /> : <Navigate to="/" />} />
         <Route path="/home" element={user ? <Home /> : <Navigate to="/" />} />
         <Route path="/rating" element={user ? <Rating /> : <Navigate to="/" />} />
         <Route path="/services" element={user ? <Services /> : <Navigate to="/" />} />

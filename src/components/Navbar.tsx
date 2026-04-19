@@ -60,8 +60,8 @@ const Navbar: React.FC = () => {
         <Link to="/watchlist" className={`${isActive('/watchlist') ? 'text-white' : 'text-gray-400 hover:text-gray-200'} transition-colors`}>
           Watchlist
         </Link>
-        <Link to="/ratings" className={`${isActive('/ratings') ? 'text-white' : 'text-gray-400 hover:text-gray-200'} transition-colors`}>
-          My ratings
+        <Link to="/reviews" className={`${isActive('/reviews') ? 'text-white' : 'text-gray-400 hover:text-gray-200'} transition-colors`}>
+          My reviews
         </Link>
       </div>
 
