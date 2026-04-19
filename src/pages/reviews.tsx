@@ -36,7 +36,7 @@ const RatingListItem: React.FC<{
     return (
         <div className="flex items-start gap-5 w-full relative group">
             {/* Poster */}
-            <div className="w-[100px] h-[150px] flex-shrink-0 bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+            <div className="w-[60px] h-[150px] lg:w-[120px] lg:h-[180px] flex-shrink-0 bg-gray-800 rounded-xl overflow-hidden shadow-lg">
                 {movie.poster ? (
                     <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
                 ) : (

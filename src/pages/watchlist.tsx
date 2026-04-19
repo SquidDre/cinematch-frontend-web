@@ -267,7 +267,7 @@ const WatchlistPage: React.FC = () => {
         <div className="min-h-screen bg-[#0d0d0d] text-white font-sans">
             <Navbar />
 
-            <main className="px-10 pt-10 pb-16">
+            <main className="px-8 md:px-40 pt-10 pb-16">
                 <p className="text-[#E85D22] text-sm font-bold tracking-widest uppercase mb-1">
                     Saved to Watch
                 </p>
