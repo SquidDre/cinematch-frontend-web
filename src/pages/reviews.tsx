@@ -219,7 +219,7 @@ const RatingsPage: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="min-h-screen bg-[#0d0d0d] text-white flex items-center justify-center font-sans">Loading Ratings...</div>;
+    //if (loading) return <div className="min-h-screen bg-[#0d0d0d] text-white flex items-center justify-center font-sans">Loading Ratings...</div>;
     
     if (error) return (
         <div className="min-h-screen bg-[#0d0d0d] text-red-500 flex flex-col items-center justify-center font-sans p-10 text-center">
@@ -231,6 +231,8 @@ const RatingsPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#0d0d0d] text-white font-sans relative">
             <Navbar />
+            <div className={`transition-opacity duration-1000 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
+
 
             {/* Invisible overlay to close dropdowns when clicking outside */}
             {activeDropdownId && (
@@ -239,6 +241,7 @@ const RatingsPage: React.FC = () => {
                     onClick={() => setActiveDropdownId(null)} 
                 />
             )}
+
 
             {/* Adjusted padding to match the mobile/centered layout vibe */}
             <main className="px-8 md:px-40 pt-10 pb-16">
@@ -357,6 +360,7 @@ const RatingsPage: React.FC = () => {
                     </div>
                 </div>
             )}
+        </div>
         </div>
     );
 };

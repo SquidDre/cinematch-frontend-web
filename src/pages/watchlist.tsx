@@ -253,7 +253,7 @@ const WatchlistPage: React.FC = () => {
         setHoveredStar(null);
     };
 
-    if (loading) return <div className="min-h-screen bg-[#0d0d0d] text-white flex items-center justify-center font-sans">Loading Watchlist...</div>;
+    //if (loading) return <div className="min-h-screen bg-[#0d0d0d] text-white flex items-center justify-center font-sans">Loading Watchlist...</div>;
     
     if (error) return (
         <div className="min-h-screen bg-[#0d0d0d] text-red-500 flex flex-col items-center justify-center font-sans p-10 text-center">
@@ -266,6 +266,8 @@ const WatchlistPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#0d0d0d] text-white font-sans">
             <Navbar />
+
+            <div className={`transition-opacity duration-1000 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
 
             <main className="px-8 md:px-40 pt-10 pb-16">
                 <p className="text-[#E85D22] text-sm font-bold tracking-widest uppercase mb-1">
@@ -419,6 +421,7 @@ const WatchlistPage: React.FC = () => {
                     </div>
                 </div>
             )}
+        </div>
         </div>
     );
 };

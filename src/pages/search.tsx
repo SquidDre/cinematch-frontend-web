@@ -152,6 +152,7 @@ const Search: React.FC = () => {
         <div className="min-h-screen bg-black text-white font-sans selection:bg-[#E85D22] selection:text-white">
             <Navbar />
 
+            <div className={`transition-opacity duration-1000 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
             <main className="mx-auto px-8 md:px-32 pt-16 pb-24">
                 {/* Hero Section */}
                 <div className="mb-12">
@@ -260,6 +261,7 @@ const Search: React.FC = () => {
                     })}
                 </div>
             </main>
+            </div>
         </div>
     );
 };

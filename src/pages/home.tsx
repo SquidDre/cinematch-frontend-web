@@ -76,6 +76,7 @@ const HomeScreen: React.FC = () => {
         <div className="min-h-fit bg-black text-white font-sans pb-20">
             {/* Navbar stays visible immediately */}
             <Navbar />
+            <div className={`transition-opacity duration-1000 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
             
             {/* We pass isLoading down to the rows so they can handle the spinner */}
             <div className="max-w-full pl-16 pt-8">
@@ -95,6 +96,7 @@ const HomeScreen: React.FC = () => {
                     />
                 </div>
             ))}
+            </div>
         </div>
     );
 };

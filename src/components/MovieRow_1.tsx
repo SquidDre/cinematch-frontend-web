@@ -33,8 +33,8 @@ const MovieRow: React.FC<MovieRowProps> = ({ movies, title, isLoading }) => {
                    [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {movies.map(movie => (
                     <MovieCard
-                        id={movie.id}
                         key={movie.id}
+                        id={movie.id}
                         title={movie.title}
                         platform={movie.platform}
                         genre={movie.genre}
