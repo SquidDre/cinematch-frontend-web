@@ -25,16 +25,37 @@ interface MovieResult {
 const Search: React.FC = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeFilter, setActiveFilter] = useState('All services');
     const [searchResults, setSearchResults] = useState<MovieResult[]>([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const filters = [
-        'All services', 'Netflix', 'Hulu', 'Apple TV', '|',
-        'Sci-fi', 'Drama', 'Action', 'Horror', 'Comedy', 'Anime', 'Fantasy', '|',
-        'Highest Match', 'Recently Added'
-    ];
+    // --- NEW: Track which movies are in the watchlist ---
+    const [watchlistIds, setWatchlistIds] = useState<Set<number>>(new Set());
+
+    // --- NEW: Fetch existing watchlist on load ---
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user');
+        if (!savedUser) return;
+
+        const fetchUserWatchlist = async () => {
+            try {
+                const user = JSON.parse(savedUser);
+                // Utilizing Vite Proxy
+                const response = await fetch(`/api/watchlist/user/${user._id}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store all saved movie IDs in a Set for super fast lookups
+                    const ids = new Set<number>(data.map((item: any) => Number(item.movieId)));
+                    setWatchlistIds(ids);
+                }
+            } catch (err) {
+                console.error("Failed to load initial watchlist", err);
+            }
+        };
+
+        fetchUserWatchlist();
+    }, []);
 
     // --- Search Fetching Logic with Debounce ---
     useEffect(() => {
@@ -82,16 +103,18 @@ const Search: React.FC = () => {
 
     // --- Watchlist Logic ---
     const handleAddWatchlist = async (movieId: number) => {
-        setIsLoading(true);
         setError('');
 
+        const savedUser = localStorage.getItem('user');
+        if (!savedUser) {
+            setError('User not authenticated. Please log in again.');
+            return;
+        }
+        
+        // Optimistic UI Update: Instantly show it as added before the DB responds
+        setWatchlistIds(prev => new Set(prev).add(movieId));
+
         try {
-            const savedUser = localStorage.getItem('user');
-            if (!savedUser) {
-                setError('User not authenticated. Please log in again.');
-                return;
-            }
-            
             const user = JSON.parse(savedUser);
             const payload = {
                 userId: user._id,
@@ -100,11 +123,12 @@ const Search: React.FC = () => {
                 addedAt: new Date().toISOString()
             };
 
-            const response = await fetch('http://localhost:8080/api/watchlist', {
+            // Utilizing Vite Proxy
+            const response = await fetch('/api/watchlist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
+                    'Authorization': `Bearer ${user.token}` // Keep this if your Express route requires it
                 },
                 body: JSON.stringify(payload)
             });
@@ -113,11 +137,14 @@ const Search: React.FC = () => {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to add to watchlist');
             }
-            console.log('Movie added to watchlist successfully');
         } catch (err: any) {
+            // If the database fails, revert the button back to its un-added state
+            setWatchlistIds(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(movieId);
+                return newSet;
+            });
             setError(err.message || 'An unexpected error occurred');
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -125,7 +152,7 @@ const Search: React.FC = () => {
         <div className="min-h-screen bg-black text-white font-sans selection:bg-[#E85D22] selection:text-white">
             <Navbar />
 
-            <main className="mx-auto px-32 pt-16 pb-24">
+            <main className="mx-auto px-8 md:px-32 pt-16 pb-24">
                 {/* Hero Section */}
                 <div className="mb-12">
                     <h1 className="text-6xl md:text-7xl font-serif tracking-tight leading-none mb-2">Find your next</h1>
@@ -152,23 +179,6 @@ const Search: React.FC = () => {
                     )}
                 </div>
 
-                {/* Filter Pills *
-                <div className="flex flex-wrap items-center gap-3 mb-12">
-                    {filters.map((filter, index) => {
-                        if (filter === '|') return <div key={index} className="w-px h-6 bg-white/20 mx-1"></div>;
-                        const isActive = activeFilter === filter;
-                        return (
-                            <button
-                                key={index}
-                                onClick={() => setActiveFilter(filter)}
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${isActive ? 'border-[#E85D22] text-white bg-[#E85D22]/10' : 'border-white/20 text-gray-400 hover:border-gray-400 hover:text-white'}`}
-                            >
-                                {filter}
-                            </button>
-                        );
-                    })}
-                </div> */}
-
                 {error && <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-lg mb-8">{error}</div>}
 
                 {/* Results List */}
@@ -177,59 +187,77 @@ const Search: React.FC = () => {
                         <div className="text-gray-400 text-center py-12">No movies found matching "{searchQuery}"</div>
                     )}
 
-                    {searchResults.map((movie) => (
-                        <div 
-                            key={movie.id} 
-                            onClick={() => navigate(`/movie/${movie.id}`)}
-                            className="flex flex-col md:flex-row bg-[#151515] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors cursor-pointer group"
-                        >
-                            {/* Movie Poster */}
-                            <div className="w-full md:w-32 h-48 md:h-auto flex-shrink-0 overflow-hidden">
-                                <img src={movie.image} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                            </div>
+                    {searchResults.map((movie) => {
+                        // Check if this specific movie is in our watchlist Set
+                        const isAdded = watchlistIds.has(movie.id);
 
-                            {/* Movie Info */}
-                            <div className="p-6 flex flex-col justify-between flex-grow">
-                                <div>
-                                    <h2 className="text-3xl font-serif font-bold mb-2 group-hover:text-[#E85D22] transition-colors">{movie.title}</h2>
-                                    <p className="text-gray-400 text-sm mb-4">
-                                        {movie.year} {movie.director !== 'N/A' && `· ${movie.director}`} {movie.duration !== 'N/A' && `· ${movie.duration}`}
-                                    </p>
-                                    <div className="flex gap-2">
-                                        {movie.genres.map((genre, idx) => (
-                                            <span key={idx} className="bg-white/5 text-gray-300 text-xs px-3 py-1 rounded-full font-medium">
-                                                {genre}
-                                            </span>
-                                        ))}
+                        return (
+                            <div 
+                                key={movie.id} 
+                                onClick={() => navigate(`/movie/${movie.id}`)}
+                                className="flex flex-col md:flex-row bg-[#151515] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors cursor-pointer group"
+                            >
+                                {/* Movie Poster */}
+                                <div className="w-full md:w-32 h-48 md:h-auto flex-shrink-0 overflow-hidden">
+                                    <img src={movie.image} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                </div>
+
+                                {/* Movie Info */}
+                                <div className="p-6 flex flex-col justify-between flex-grow">
+                                    <div>
+                                        <h2 className="text-3xl font-serif font-bold mb-2 group-hover:text-[#E85D22] transition-colors">{movie.title}</h2>
+                                        <p className="text-gray-400 text-sm mb-4">
+                                            {movie.year} {movie.director !== 'N/A' && `· ${movie.director}`} {movie.duration !== 'N/A' && `· ${movie.duration}`}
+                                        </p>
+                                        <div className="flex gap-2">
+                                            {movie.genres.map((genre, idx) => (
+                                                <span key={idx} className="bg-white/5 text-gray-300 text-xs px-3 py-1 rounded-full font-medium">
+                                                    {genre}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Right Side Actions */}
-                            <div 
-                                className="p-6 flex flex-col items-start md:items-end justify-between border-t md:border-t-0 md:border-l border-white/5 md:w-64"
-                                onClick={(e) => e.stopPropagation()} 
-                            >
-                                <div className="text-left md:text-right w-full mb-4 md:mb-0">
-                                    {movie.match > 0 ? (
-                                        <div className="text-4xl font-serif text-[#E85D22] mb-1">{movie.match}%</div>
-                                    ) : (
-                                        <div className="text-lg font-serif text-gray-500 mb-1 mt-2">Unrated</div>
-                                    )}
-                                </div>
-                                
-                                <button 
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 text-sm font-medium hover:bg-white/10 hover:border-[#E85D22] transition-all w-full md:w-auto justify-center" 
-                                    onClick={() => handleAddWatchlist(movie.id)}
+                                {/* Right Side Actions */}
+                                <div 
+                                    className="p-6 flex flex-col items-start md:items-end justify-between border-t md:border-t-0 md:border-l border-white/5 md:w-64"
+                                    onClick={(e) => e.stopPropagation()} 
                                 >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    Add to watchlist
-                                </button>
+                                    <div className="text-left md:text-right w-full mb-4 md:mb-0">
+                                        {movie.match > 0 ? (
+                                            <div className="text-4xl font-serif text-[#E85D22] mb-1">{movie.match}%</div>
+                                        ) : (
+                                            <div className="text-lg font-serif text-gray-500 mb-1 mt-2">Unrated</div>
+                                        )}
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={() => {
+                                            if (!isAdded) handleAddWatchlist(movie.id);
+                                        }}
+                                        disabled={isAdded}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all w-full md:w-auto justify-center ${
+                                            isAdded 
+                                                ? 'bg-white text-black border-white cursor-default' 
+                                                : 'border-white/20 text-white hover:bg-white/10 hover:border-[#E85D22]'
+                                        }`} 
+                                    >
+                                        {isAdded ? (
+                                            <>✓ Added to watchlist</>
+                                        ) : (
+                                            <>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                                Add to watchlist
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </main>
         </div>
