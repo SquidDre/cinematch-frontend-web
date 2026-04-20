@@ -12,7 +12,7 @@ interface Stub {
     title: string;
     year: string;
     poster: string;
-    match: number;
+    vote: number;
     genre: string;
     service: string;
     added: string;
@@ -52,7 +52,7 @@ const Barcode: React.FC<{ id: string }> = ({ id }) => {
     );
 };
 
-const InfoCell: React.FC<{ label: string; value: string; orange?: boolean; large?: boolean }> =
+const InfoCell: React.FC<{ label: string; value: string | number; orange?: boolean; large?: boolean }> =
     ({ label, value, orange, large }) => (
     <div>
         <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">{label}</p>
@@ -74,7 +74,7 @@ const StubCard: React.FC<StubCardProps> = ({ stub, onClick }) => (
     >
         <div className="flex-1 overflow-hidden rounded-t-2xl bg-gray-200">
             {stub.poster ? (
-                <img src={stub.poster} alt={stub.title} className="w-full h-full object-cover" />
+                <img src={stub.poster} loading="lazy" alt={stub.title} className="w-full h-full object-cover" />
             ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Poster</div>
             )}
@@ -82,7 +82,7 @@ const StubCard: React.FC<StubCardProps> = ({ stub, onClick }) => (
 
         <div className="grid grid-cols-2">
             <div className="px-4 pt-3 pb-3 border-r border-b border-gray-100">
-                <InfoCell label="Match" value={`${stub.match}%`} orange large />
+                <InfoCell label="Score" value={stub.vote > 0 ? stub.vote : 'N/A'} orange large />
             </div>
             <div className="px-4 pt-3 pb-3 border-b border-gray-100">
                 <InfoCell label="Genre" value={stub.genre} />
@@ -112,7 +112,6 @@ const StubCard: React.FC<StubCardProps> = ({ stub, onClick }) => (
 
 
 const WatchlistPage: React.FC = () => {
-    // --- LOCAL STORAGE LOGIC ADDED HERE ---
     const storedUser = localStorage.getItem('user');
     const userId = storedUser ? JSON.parse(storedUser)._id : null;
 
@@ -141,7 +140,6 @@ const WatchlistPage: React.FC = () => {
                 setLoading(true);
                 setError(null);
                 
-                // 1. Fetch from Express
                 const dbResponse = await fetch(`http://localhost:8080/api/watchlist/user/${userId}`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
@@ -154,7 +152,6 @@ const WatchlistPage: React.FC = () => {
                 const dbData = await dbResponse.json(); 
                 console.log(`[3] DB Data Parsed:`, dbData);
 
-                // Safety Check: Make sure it's an array before mapping
                 if (!Array.isArray(dbData)) {
                     throw new Error("Expected database to return an array, but got: " + typeof dbData);
                 }
@@ -162,10 +159,9 @@ const WatchlistPage: React.FC = () => {
                 if (dbData.length === 0) {
                     console.log('[3b] User has no movies in their watchlist.');
                     setStubs([]);
-                    return; // exit early if no movies
+                    return; 
                 }
 
-                // 2. Fetch from TMDB
                 const hydratedStubsPromises = dbData.map(async (item: any) => {
                     try {
                         console.log(`[4a] Fetching TMDB for movieId: ${item.movieId}`);
@@ -187,7 +183,7 @@ const WatchlistPage: React.FC = () => {
                             title: tmdbData.title,
                             year: tmdbData.release_date ? tmdbData.release_date.split('-')[0] : 'N/A',
                             poster: tmdbData.poster_path ? `https://image.tmdb.org/t/p/w500${tmdbData.poster_path}` : '',
-                            match: Math.floor(Math.random() * 20) + 80, 
+                            vote: tmdbData.vote_average ? Number(tmdbData.vote_average.toFixed(1)) : 0, 
                             genre: tmdbData.genres?.[0]?.name || 'Cinema',
                             service: 'VOD', 
                             added: item.addedAt ? new Date(item.addedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Recently',
@@ -220,7 +216,7 @@ const WatchlistPage: React.FC = () => {
     const sortedStubs = [...stubs]
         .filter(s => !removedStubs.has(s.dbId))
         .sort((a, b) => {
-            if (activeSort === 'match') return b.match - a.match;
+            if (activeSort === 'match') return b.vote - a.vote;
             if (activeSort === 'az') return a.title.localeCompare(b.title);
             return new Date(b.added).getTime() - new Date(a.added).getTime(); 
         });
@@ -252,8 +248,6 @@ const WatchlistPage: React.FC = () => {
         setSelectedStub(null);
         setHoveredStar(null);
     };
-
-    //if (loading) return <div className="min-h-screen bg-[#0d0d0d] text-white flex items-center justify-center font-sans">Loading Watchlist...</div>;
     
     if (error) return (
         <div className="min-h-screen bg-[#0d0d0d] text-red-500 flex flex-col items-center justify-center font-sans p-10 text-center">
@@ -279,7 +273,7 @@ const WatchlistPage: React.FC = () => {
                     {(
                         [
                             { key: 'recent', label: 'Recently Added' },
-                            { key: 'match', label: 'Best Match' },
+                            { key: 'match', label: 'Highest Score' },
                             { key: 'az', label: 'A–Z' },
                         ] as const
                     ).map(({ key, label }) => (
@@ -334,6 +328,7 @@ const WatchlistPage: React.FC = () => {
                             <div className="w-full aspect-[3/4] overflow-hidden rounded-t-2xl">
                                 {selectedStub.poster ? (
                                     <img
+                                        loading="lazy"
                                         src={selectedStub.poster}
                                         alt={selectedStub.title}
                                         className="w-full h-full object-cover"
@@ -345,7 +340,7 @@ const WatchlistPage: React.FC = () => {
 
                             <div className="grid grid-cols-2">
                                 <div className="px-4 pt-3 pb-3 border-r border-b border-gray-100">
-                                    <InfoCell label="Match" value={`${selectedStub.match}%`} orange large />
+                                    <InfoCell label="Score" value={selectedStub.vote > 0 ? selectedStub.vote : 'N/A'} orange large />
                                 </div>
                                 <div className="px-4 pt-3 pb-3 border-b border-gray-100">
                                     <InfoCell label="Genre" value={selectedStub.genre} />

@@ -99,11 +99,11 @@ const Login: React.FC = () => {
                 `}
             </style>
 
-            {/* Main Content for Login Splitting Page */}
-            <div className = "flex flex-col lg:flex-row flex-grow">
+            {/* --- CHANGED TO <main> TAG HERE --- */}
+            <main className = "flex flex-col lg:flex-row flex-grow">
                 {/* Left side */}
                 <div className = "w-full lg:w-1/2 bg-[#F4F1EA] p-8 md:p-16 md:pb-24 flex flex-col relative min-h-[50vh] lg:min-h-0">
-                    <div className = "text-xl font-bold tracking-[0.2em] text-gray-500 mb-36">
+                    <div className = "text-xl font-bold tracking-[0.2em] text-black mb-36">
                         CINEMATCH
                     </div>
 
@@ -116,11 +116,11 @@ const Login: React.FC = () => {
                         </h1>
                     </div>
 
-                    <p className = "text-gray-500 text-lg md:text-xl max-w-md leading-relaxed mb-8 lg:mb-0">
+                    <p className = "text-black text-lg md:text-xl max-w-md leading-relaxed mb-8 lg:mb-0">
                         Start exploring new movies
                     </p>
 
-                    <p className = "text-gray-500 text-lg mt-auto text-center w-full flex justify-center items-center gap-2">
+                    <p className = "text-black text-lg mt-auto text-center w-full flex justify-center items-center gap-2">
                         Don't have an account?{' '}
                         <a href = "/create" className = "text-[#E85D22] font-bold hover:underline">Sign up</a>
                     </p>
@@ -139,7 +139,7 @@ const Login: React.FC = () => {
                             </h2>
 
                             {/* Email */}
-                            <p className = "text-gray-400 text-sm mb-2 font-bold tracking-widest uppercase">
+                            <p className = "text-gray-300 text-sm mb-2 font-bold tracking-widest uppercase">
                                 Email
                             </p>
                             <input
@@ -147,11 +147,11 @@ const Login: React.FC = () => {
                                 placeholder = "eg. johndoe@gmail.com"
                                 value = {login}
                                 onChange = {(e) => setLogin(e.target.value)}
-                                className = "w-full mb-6 px-5 py-3.5 rounded-full bg-[#1E1E1E] border-2 border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
+                                className = "w-full mb-6 px-5 py-3.5 rounded-full bg-[#1E1E1E] border-2 border-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#E85D22] focus:border-transparent transition-colors duration-200"
                             />
 
                             {/* Password */}
-                            <p className = "text-gray-400 text-sm mb-2 font-bold tracking-widest uppercase">
+                            <p className = "text-gray-300 text-sm mb-2 font-bold tracking-widest uppercase">
                                 Password
                             </p>
                             <div className = "relative mb-1">
@@ -198,7 +198,7 @@ const Login: React.FC = () => {
                         </form>
                     </div>
                 </div>
-            </div>
+            </main>
 
             {/* Infinite scrolling marquee */}
             <div className = "w-full bg-[#E85D22] overflow-hidden py-4 border-t border-black/10">

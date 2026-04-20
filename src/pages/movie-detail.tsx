@@ -6,24 +6,21 @@ const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 const MovieDetail: React.FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>(); // Grabs movie ID from URL
+    const { id } = useParams<{ id: string }>(); 
 
-    // Get user from local storage
     const storedUser = localStorage.getItem('user');
     const userId = storedUser ? JSON.parse(storedUser)._id : null;
 
-    // TMDB Data State
     const [movie, setMovie] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // User Interaction State
     const [addedToWatchlist, setAddedToWatchlist] = useState(false);
-    const [watchlistDbId, setWatchlistDbId] = useState<string | null>(null); // MongoDB _id for watchlist
+    const [watchlistDbId, setWatchlistDbId] = useState<string | null>(null); 
     
     const [showRating, setShowRating] = useState(false);
     const [userRating, setUserRating] = useState(0);
-    const [reviewDbId, setReviewDbId] = useState<string | null>(null); // MongoDB _id for review
+    const [reviewDbId, setReviewDbId] = useState<string | null>(null); 
     const [hoveredStar, setHoveredStar] = useState<number | null>(null);
 
     const ratingLabels: Record<number, string> = {
@@ -34,7 +31,6 @@ const MovieDetail: React.FC = () => {
         5: 'Perfect',
     };
 
-    // FETCH TMDB MOVIE DATA
     useEffect(() => {
         const fetchMovieData = async () => {
             if (!id) return;
@@ -82,17 +78,14 @@ const MovieDetail: React.FC = () => {
         fetchMovieData();
     }, [id]);
 
-    // Is it in their watchlist/ratings?
     useEffect(() => {
         if (!userId || !id) return;
 
         const checkUserDatabaseStatus = async () => {
             try {
-                // Check Watchlist
                 const wlResponse = await fetch(`/api/watchlist/user/${userId}`);
                 if (wlResponse.ok) {
                     const wlData = await wlResponse.json();
-                    // Match TMDB id with database movieId
                     const existingWl = wlData.find((item: any) => String(item.movieId) === String(id));
                     if (existingWl) {
                         setAddedToWatchlist(true);
@@ -100,7 +93,6 @@ const MovieDetail: React.FC = () => {
                     }
                 }
 
-                // Check Ratings/Reviews
                 const revResponse = await fetch(`/api/reviews/user/${userId}`);
                 if (revResponse.ok) {
                     const revData = await revResponse.json();
@@ -118,7 +110,6 @@ const MovieDetail: React.FC = () => {
         checkUserDatabaseStatus();
     }, [userId, id]);
 
-    // 3. HANDLER: TOGGLE WATCHLIST
     const handleWatchlistToggle = async () => {
         if (!userId) {
             alert("Please log in to manage your watchlist.");
@@ -127,13 +118,11 @@ const MovieDetail: React.FC = () => {
 
         try {
             if (addedToWatchlist && watchlistDbId) {
-                // Remove from database
-                setAddedToWatchlist(false); // Optimistic UI update
+                setAddedToWatchlist(false);
                 await fetch(`/api/watchlist/${watchlistDbId}`, { method: 'DELETE' });
                 setWatchlistDbId(null);
             } else {
-                // Add to database
-                setAddedToWatchlist(true); // Optimistic UI update
+                setAddedToWatchlist(true);
                 const response = await fetch(`/api/watchlist`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -148,7 +137,6 @@ const MovieDetail: React.FC = () => {
         }
     };
 
-    // 4. HANDLER: RATE MOVIE
     const handleRateMovie = async (star: number) => {
         if (!userId) {
             alert("Please log in to rate movies.");
@@ -156,18 +144,16 @@ const MovieDetail: React.FC = () => {
         }
 
         try {
-            setUserRating(star); // Optimistic UI update
+            setUserRating(star);
             setShowRating(false);
 
             if (reviewDbId) {
-                // Update existing rating in DB
                 await fetch(`/api/reviews/${reviewDbId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ rating: star })
                 });
             } else {
-                // Create new rating in DB
                 const response = await fetch(`/api/reviews`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -187,9 +173,9 @@ const MovieDetail: React.FC = () => {
     if (!movie) return null;
 
     return (
-        <div className="min-h-screen bg-[#2b2b2b] text-white font-sans">
+        <div className="min-h-screen bg-[#2b2b2b] text-white font-sans overflow-x-hidden">
             {/* ── Backdrop ── */}
-            <div className="relative w-full h-[420px]">
+            <div className="relative w-full h-[50vh] md:h-[420px]">
                 {movie.backdrop && (
                     <img
                         src={movie.backdrop}
@@ -197,18 +183,18 @@ const MovieDetail: React.FC = () => {
                         className="absolute inset-0 w-full h-full object-cover object-top"
                     />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2b2b2b] via-[#2b2b2b]/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2b2b2b] via-[#2b2b2b]/60 to-transparent" />
 
                 <button
                     onClick={() => navigate(-1)}
-                    className="absolute top-5 left-8 text-white text-sm hover:text-gray-300 transition-colors cursor-pointer"
+                    className="absolute top-5 left-4 md:left-8 text-white text-sm hover:text-gray-300 transition-colors cursor-pointer flex items-center gap-1 bg-black/30 md:bg-transparent px-3 py-1.5 md:p-0 rounded-full md:rounded-none backdrop-blur-sm md:backdrop-blur-none"
                 >
                     ← back
                 </button>
 
-                <div className="absolute bottom-16 left-8 flex gap-2">
+                <div className="absolute bottom-6 md:bottom-16 left-4 md:left-8 flex flex-wrap gap-2 pr-4">
                     {movie.genres.map((genre: string, idx: number) => (
-                        <span key={idx} className="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold">
+                        <span key={idx} className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold">
                             {genre}
                         </span>
                     ))}
@@ -216,17 +202,17 @@ const MovieDetail: React.FC = () => {
             </div>
 
             {/* ── Title + Meta + Buttons ── */}
-            <div className="px-8 pb-6">
-                <h1 className="text-6xl font-serif text-white mb-2 leading-tight">{movie.title}</h1>
-                <p className="text-[#888] text-sm mb-5 tracking-tight">
+            <div className="px-5 md:px-8 pb-10">
+                <h1 className="text-4xl md:text-6xl font-serif text-white mb-2 leading-tight">{movie.title}</h1>
+                <p className="text-[#888] text-xs md:text-sm mb-6 tracking-tight">
                     {movie.director} · {movie.year} · {movie.runtime.replace(' mins', 'm')} · {movie.rating}
                 </p>
 
-                <div className="flex flex-wrap items-end gap-6 mb-10">
-                    <div className="flex gap-3">
+                <div className="flex flex-col md:flex-row md:items-end gap-6 mb-10">
+                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                         <button
-                            onClick={handleWatchlistToggle} // <-- Hooked up to backend
-                            className={`px-5 py-2.5 rounded-[10px] text-sm font-bold transition-colors cursor-pointer ${
+                            onClick={handleWatchlistToggle} 
+                            className={`w-full sm:w-auto px-6 py-3 md:py-2.5 rounded-xl md:rounded-[10px] text-sm font-bold transition-colors cursor-pointer ${
                                 addedToWatchlist ? 'bg-white text-black' : 'bg-[#E85D22] hover:bg-[#d0521e] text-white'
                             }`}
                         >
@@ -236,14 +222,14 @@ const MovieDetail: React.FC = () => {
                         {userRating > 0 ? (
                             <button
                                 onClick={() => setShowRating(!showRating)}
-                                className="px-5 py-2.5 rounded-[10px] text-sm font-bold border-2 border-[#E85D22] text-[#E85D22] transition-colors cursor-pointer"
+                                className="w-full sm:w-auto px-6 py-3 md:py-2.5 rounded-xl md:rounded-[10px] text-sm font-bold border-2 border-[#E85D22] text-[#E85D22] transition-colors cursor-pointer text-center"
                             >
                                 ★ Rated {userRating}/5
                             </button>
                         ) : (
                             <button
                                 onClick={() => setShowRating(!showRating)}
-                                className="px-5 py-2.5 rounded-[10px] text-sm font-bold border-2 border-white/20 hover:border-white/40 text-white transition-colors cursor-pointer"
+                                className="w-full sm:w-auto px-6 py-3 md:py-2.5 rounded-xl md:rounded-[10px] text-sm font-bold border-2 border-white/20 hover:border-white/40 text-white transition-colors cursor-pointer text-center"
                             >
                                 ★ Rate this movie
                             </button>
@@ -252,9 +238,9 @@ const MovieDetail: React.FC = () => {
 
                     {/* Available On */}
                     {movie.streamingOn.length > 0 && (
-                        <div>
+                        <div className="mt-2 md:mt-0">
                             <p className="text-[#888] text-[10px] font-semibold tracking-widest uppercase mb-2">Available On</p>
-                            <div className="flex items-center gap-5">
+                            <div className="flex flex-wrap items-center gap-4 md:gap-5">
                                 {movie.streamingOn.map((provider: string, idx: number) => (
                                     <span key={idx} className="font-bold text-sm tracking-tight text-white/80">
                                         {provider}
@@ -267,16 +253,16 @@ const MovieDetail: React.FC = () => {
 
                 {/* ── Rating Bar ── */}
                 {showRating && (
-                    <div className="flex items-center gap-4 bg-[#1a1a1a] rounded-xl px-6 py-4 mb-8 w-full max-w-2xl">
+                    <div className="flex flex-col sm:flex-row items-center justify-between sm:justify-start gap-4 bg-[#1a1a1a] rounded-xl px-5 py-4 mb-8 w-full md:max-w-2xl">
                         <span className="text-gray-400 text-sm font-semibold">Your rating</span>
-                        <div className="flex gap-2 ml-4">
+                        <div className="flex gap-2 sm:ml-4">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <button
                                     key={star}
                                     onMouseEnter={() => setHoveredStar(star)}
                                     onMouseLeave={() => setHoveredStar(null)}
-                                    onClick={() => handleRateMovie(star)} // <-- Hooked up to backend
-                                    className="cursor-pointer transition-transform hover:scale-110"
+                                    onClick={() => handleRateMovie(star)} 
+                                    className="cursor-pointer transition-transform hover:scale-110 p-1"
                                 >
                                     <StarIcon
                                         className={`w-8 h-8 transition-colors ${
@@ -287,26 +273,27 @@ const MovieDetail: React.FC = () => {
                             ))}
                         </div>
                         {(hoveredStar || userRating) ? (
-                            <span className="text-[#E85D22] text-sm font-semibold">
+                            <span className="text-[#E85D22] text-sm font-semibold mt-2 sm:mt-0">
                                 {ratingLabels[hoveredStar ?? userRating]}
                             </span>
                         ) : null}
                     </div>
                 )}
 
-                {/* Lower Section */}
-                <div className="flex gap-10">
-                    {/* Left Column */}
+                {/* Lower Section: Stacks on Mobile, Side-by-Side on Desktop */}
+                <div className="flex flex-col lg:flex-row gap-10">
+                    
+                    {/* Left Column (Main Info) */}
                     <div className="flex-1">
-                        <div className="flex gap-6 mb-6">
+                        <div className="flex flex-col sm:flex-row gap-6 mb-8">
                             {movie.poster ? (
                                 <img
                                     src={movie.poster}
                                     alt={movie.title}
-                                    className="w-[165px] h-[230px] object-cover rounded-lg flex-shrink-0"
+                                    className="w-1/2 max-w-[165px] sm:w-[165px] h-auto sm:h-[230px] object-cover rounded-lg flex-shrink-0 mx-auto sm:mx-0 shadow-lg"
                                 />
                             ) : (
-                                <div className="w-[165px] h-[230px] bg-[#1a1a1a] rounded-lg flex-shrink-0 flex items-center justify-center">
+                                <div className="w-1/2 max-w-[165px] sm:w-[165px] h-auto sm:h-[230px] aspect-[2/3] bg-[#1a1a1a] rounded-lg flex-shrink-0 flex items-center justify-center mx-auto sm:mx-0 shadow-lg">
                                     <span className="text-[#444] text-xs">No Poster</span>
                                 </div>
                             )}
@@ -316,16 +303,17 @@ const MovieDetail: React.FC = () => {
                                     {movie.description}
                                 </p>
 
-                                <div className="flex gap-3">
-                                    <div className="flex-1 border border-[#444] rounded-lg px-4 py-3">
+                                {/* Responsive Grid for Info Boxes */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    <div className="border border-[#444] rounded-lg px-3 py-3">
                                         <p className="text-[#888] text-[10px] font-bold tracking-widest uppercase mb-1">Director</p>
-                                        <p className="text-white text-sm font-semibold">{movie.director}</p>
+                                        <p className="text-white text-sm font-semibold truncate">{movie.director}</p>
                                     </div>
-                                    <div className="flex-1 border border-[#444] rounded-lg px-4 py-3">
+                                    <div className="border border-[#444] rounded-lg px-3 py-3">
                                         <p className="text-[#888] text-[10px] font-bold tracking-widest uppercase mb-1">Runtime</p>
                                         <p className="text-white text-sm font-semibold">{movie.runtime}</p>
                                     </div>
-                                    <div className="flex-1 border border-[#444] rounded-lg px-4 py-3">
+                                    <div className="border border-[#444] rounded-lg px-3 py-3 col-span-2 sm:col-span-1">
                                         <p className="text-[#888] text-[10px] font-bold tracking-widest uppercase mb-1">Year</p>
                                         <p className="text-white text-sm font-semibold">{movie.year}</p>
                                     </div>
@@ -333,33 +321,33 @@ const MovieDetail: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Match Score Box (Mocked) */}
-                        <div className="border border-[#E85D22]/40 rounded-lg px-5 py-4">
+                        {/* Match Score Box */}
+                        <div className="border border-[#E85D22]/40 bg-[#E85D22]/5 rounded-xl px-5 py-5">
                             <p className="text-[#E85D22] text-xs font-bold tracking-widest uppercase mb-2">
                                 {movie.matchScore}% Match For You
                             </p>
-                            <p className="text-gray-400 text-sm leading-relaxed">
+                            <p className="text-gray-300 text-sm leading-relaxed">
                                 {movie.matchReason}
                             </p>
                         </div>
                     </div>
 
-                    {/* Right Column */}
-                    <div className="w-64 flex-shrink-0">
+                    {/* Right Column (Sidebar) */}
+                    <div className="w-full lg:w-64 flex-shrink-0 border-t border-[#333] lg:border-none pt-8 lg:pt-0">
                         <p className="text-[#888] text-[10px] font-bold tracking-widest uppercase mb-3">Rating</p>
-                        <div className="flex items-center gap-3 mb-6">
+                        <div className="flex items-center gap-3 mb-8">
                             <span className="text-white text-5xl font-bold">{movie.imdbRating}</span>
                             <div className="flex gap-1">
                                 {[1, 2, 3, 4, 5].map((star) => (
-                                    <StarIcon key={star} className="w-6 h-6 text-[#E85D22]" />
+                                    <StarIcon key={star} className="w-5 h-5 md:w-6 md:h-6 text-[#E85D22]" />
                                 ))}
                             </div>
                         </div>
 
-                        <div className="border-t border-[#444] mb-6" />
+                        <div className="hidden lg:block border-t border-[#444] mb-6" />
 
                         <p className="text-[#888] text-[10px] font-bold tracking-widest uppercase mb-4">Director</p>
-                        <div className="flex items-center gap-3 mb-6">
+                        <div className="flex items-center gap-3 mb-8">
                             <div className="w-10 h-10 rounded-full bg-[#444] flex items-center justify-center flex-shrink-0">
                                 <span className="text-white text-xs font-bold">
                                     {movie.director !== 'Unknown' ? movie.director.split(' ').map((n: string) => n[0]).join('').substring(0,2) : '?'}
@@ -369,7 +357,7 @@ const MovieDetail: React.FC = () => {
                         </div>
 
                         <p className="text-[#888] text-[10px] font-bold tracking-widest uppercase mb-4">Cast</p>
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4 mb-8">
                             {movie.cast.map((member: any, idx: number) => (
                                 <div key={idx} className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-[#444] flex items-center justify-center flex-shrink-0">
